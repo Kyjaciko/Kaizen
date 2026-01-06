@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{540cf20a-7ada-4363-b854-14b77b0e2132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform">
+      <UniqueIdentifier>{2e7ae691-7024-4300-ad40-2e55b851def2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform">
+      <UniqueIdentifier>{10674206-d59d-4eb8-9276-d89e91f84ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{c2fc42ff-7e4a-43fa-a23f-f246fbed0f33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform\Input">
+      <UniqueIdentifier>{07e6cf76-185f-4cac-b540-166c431c9f1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Input">
+      <UniqueIdentifier>{9a27e8f9-0499-445d-a0d8-948457587c14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform\Timer">
+      <UniqueIdentifier>{c334733e-0189-49c4-a5c9-be77fb8addfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Dear ImGui">
+      <UniqueIdentifier>{b43d4d14-6b8f-4236-9acb-7f51cffc7333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\Dear ImGui">
+      <UniqueIdentifier>{6cba39f0-a22a-4264-953e-6008def1fa71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Platform\Debug">
+      <UniqueIdentifier>{8e27bebb-0c05-4e00-81cd-b0b275314ee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Demos">
+      <UniqueIdentifier>{1a2449a9-fdb5-41ae-aee5-50dda5138661}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Demos">
+      <UniqueIdentifier>{91dd32a2-692f-4dfa-9a40-890ae177024e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Demos\Ocean">
+      <UniqueIdentifier>{6490fbc2-0e32-4307-9b83-e53db429d0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Demos\Ocean">
+      <UniqueIdentifier>{b0bac26c-eecb-4210-ac9c-901c4b811936}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\WindowFactory.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Engine.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\WindowContainer.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Input\KeyboardEvent.cpp">
+      <Filter>Source Files\Platform\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Input\Keyboard.cpp">
+      <Filter>Source Files\Platform\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Input\Mouse.cpp">
+      <Filter>Source Files\Platform\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Input\MouseEvent.cpp">
+      <Filter>Source Files\Platform\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Graphics.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\AdapterReader.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Shaders.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Camera3D.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Dear ImGui\imgui.cpp">
+      <Filter>Source Files\Graphics\Dear ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Dear ImGui\imgui_draw.cpp">
+      <Filter>Source Files\Graphics\Dear ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Dear ImGui\imgui_impl_dx11.cpp">
+      <Filter>Source Files\Graphics\Dear ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Dear ImGui\imgui_impl_win32.cpp">
+      <Filter>Source Files\Graphics\Dear ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Dear ImGui\imgui_tables.cpp">
+      <Filter>Source Files\Graphics\Dear ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Dear ImGui\imgui_widgets.cpp">
+      <Filter>Source Files\Graphics\Dear ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Model.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Mesh.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GameObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Color.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Texture.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\RenderableGameObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Light.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GameObject2D.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GameObject3D.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Camera2D.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Sprite.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\InfiniteGrid.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\AxisGizmo.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Demos\Ocean\Ocean.cpp">
+      <Filter>Source Files\Demos\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Demos\Ocean\Projector.cpp">
+      <Filter>Source Files\Demos\Ocean</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\NOTE.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Platform\WindowContainer.h">
+      <Filter>Header Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\WindowFactory.h">
+      <Filter>Header Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Engine.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Input\KeyboardEvent.h">
+      <Filter>Header Files\Platform\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Input\Keyboard.h">
+      <Filter>Header Files\Platform\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Input\Mouse.h">
+      <Filter>Header Files\Platform\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Input\MouseEvent.h">
+      <Filter>Header Files\Platform\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Graphics.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\AdapterReader.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Vertex.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Shaders.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\VertexBuffer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\IndexBuffer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\ConstantBufferTypes.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\ConstantBuffer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Camera3D.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Timer\HPTimer.h">
+      <Filter>Header Files\Platform\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imconfig.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imgui.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imgui_impl_dx11.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imgui_impl_win32.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imgui_internal.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imstb_rectpack.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imstb_textedit.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Dear ImGui\imstb_truetype.h">
+      <Filter>Header Files\Graphics\Dear ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Debug\ErrorLogger.h">
+      <Filter>Header Files\Platform\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Debug\COMException.h">
+      <Filter>Header Files\Platform\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Model.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Mesh.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GameObject.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Color.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Texture.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StringHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\RenderableGameObject.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Light.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GameObject2D.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GameObject3D.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Camera2D.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Sprite.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\AxisGizmo.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\InfiniteGrid.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Demos\Ocean\Ocean.h">
+      <Filter>Header Files\Demos\Ocean</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Demos\Demo.h">
+      <Filter>Header Files\Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Demos\Ocean\Projector.h">
+      <Filter>Header Files\Demos\Ocean</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\Graphics\Shaders\vertexshader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\pixelshader.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\pixelshader_nolighteffect.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\vertexshader_2D.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\pixelshader_2D.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\vertexshader_grid.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\pixelshader_grid.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Demos\Ocean\PS_Ocean.hlsl">
+      <Filter>Header Files\Demos\Ocean</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Demos\Ocean\VS_Ocean.hlsl">
+      <Filter>Header Files\Demos\Ocean</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Demos\Ocean\CS_PerlinNoise.hlsl">
+      <Filter>Header Files\Demos\Ocean</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,37 @@
+uses: DirectX 11 + DirectXTK
+uses: C++20
+uses: Assimp 5.4.3
+uses: Dear ImGui
+
+Classes: PascalCase
+Variables: snake_case
+Parameters: camelCase
+Functions: PascalCase
+Namespaces: snake_case
+Macros: UPPER_SNAKE_CASE
+Private Members: m_camelCase
+Global Variables: g_camelCase
+Template Parameters: PascalCase
+Enumerations: PascalCase (for enum names) and UPPER_SNAKE_CASE (for enum values)
+File Names: PascalCase
+
+this is used when functions or variables are used that are protected.
+
+Transparancy only applies to textures drawn before the texture with transparency.
+
+TO DO:
+- Add transparant window support. (engine class needs to support this too)
+- Is = 800 en = 600 needed in WindowFactory?
+- Use direct input for mouse and keyboard.
+- Graphics.cpp currently chooses the adpater (GPU) with the mest memory.
+- Graphics.cpp improve monitor and refresh rate detection (currently hardcoded to 60 FPS).
+- Graphics.cpp add support for multiple monitors.
+- Graphics.cpp add double/triple buffering.
+- Splitscreen (using multiple viewports).
+- ImGui go from master -> docking.
+- Implement complex blending (alpha blending).
+- Double code between camera and model.
+- Make second buffer in pixelshader for alpha (see Tutorial 54)
+- Create a pipeline, so we don't need to keep passing device (See tutorial 60)
+- Add LOD
+- 

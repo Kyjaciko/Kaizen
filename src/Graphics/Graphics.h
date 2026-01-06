@@ -1,0 +1,125 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: Graphics.h
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef _GRAPHICS_H_
+#define _GRAPHICS_H_
+
+//////////////
+// INCLUDES //
+//////////////
+
+#include <SpriteBatch.h>
+#include <SpriteFont.h>
+#include <WICTextureLoader.h>
+
+#include "Dear ImGui/imgui.h"
+#include "Dear ImGui/imgui_impl_dx11.h"
+#include "Dear ImGui/imgui_impl_win32.h"
+
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+
+#include "AdapterReader.h"
+#include "Shaders.h"
+#include "RenderableGameObject.h"
+#include "Camera2D.h"
+#include "Camera3D.h"
+#include "Light.h"
+#include "Sprite.h"
+#include "AxisGizmo.h"
+#include "InfiniteGrid.h"
+
+#include "../Demos/Demo.h"
+
+////////////////////////////////////////////////////////////////////////////////
+// Class name: Graphics
+////////////////////////////////////////////////////////////////////////////////
+
+namespace DirectX11
+{
+	class Graphics
+	{
+	public:
+		bool Init(HWND hWnd, int width, int height);
+		void RenderFrame(double deltaTime);
+
+		Camera3D* GetCamera() { return &m_Camera; }
+		GameObject*  GetGameObject()  { return &m_GameObject; }
+		Light* GetLight() { return &m_Light; }
+
+	private:
+		int m_WindowWidth;
+		int m_WindowHeight;
+
+		AxisGizmo											m_Axis;
+
+		Camera2D											m_Camera2D;
+		Camera3D											m_Camera;
+
+		Microsoft::WRL::ComPtr<ID3D11Device>				m_pDevice;			 // Used to create the buffers.
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext>			m_pDeviceContext;    // Used to set different resources for rendering.
+		Microsoft::WRL::ComPtr<IDXGISwapChain>				m_pSwapChain;        // Swaps out frames, using the back buffer, when rendering.
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		m_pRenderTargetView; // Used to determine where we will render our back buffer to.
+
+		// TEST
+		VertexShader										m_VertexShaderLine;
+		PixelShader											m_PixelShaderLine;
+		// TEST
+
+		VertexShader										m_VertexShader;
+		VertexShader										m_VertexShaderSprite;
+		PixelShader											m_PixelShader;
+		PixelShader											m_PixelShaderWithNoLight;
+		PixelShader											m_PixelShaderSprite;
+
+		ConstantBuffer<CB_VS_vertexshader>					m_CB_VS_vertexshader;
+		//ConstantBuffer<CB_PS_pixelshader>					m_CB_PS_pixelshader;
+		ConstantBuffer<CB_PS_light>							m_CB_PS_light;
+		ConstantBuffer<CB_VS_vertexshader_2d>				m_CB_VS_vertexshader_2d;
+
+		RenderableGameObject								m_GameObject;
+		Light												m_Light;
+		Sprite												m_Sprite;
+
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		m_pDepthStencilView;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D>				m_pDepthStencilBuffer; // Used to store the depth buffer data.
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		m_pDepthStencilState;  // Used to determine how the depth buffer is used.
+
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState>		m_pRasterizerState;	// Used to determine how the triangles are rendered.
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState>		m_pRasterizerCullFrontState;
+		Microsoft::WRL::ComPtr<ID3D11BlendState>			m_pBlendState;		// Used to determine how the triangles are blended together.
+
+		std::unique_ptr<DirectX::SpriteBatch>				m_pSpriteBatch;
+		std::unique_ptr<DirectX::SpriteFont>				m_pSpriteFont;
+
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>			m_pSamplerState;	// Used to determine how the texture is sampled.
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_pPinkTexture;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_pGrassTexture;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_pTomNookTexture;
+
+		// Grid
+		InfiniteGrid										m_InfiniteGrid;
+		VertexShader										m_VertexShaderGrid;
+		PixelShader											m_PixelShaderGrid;
+		ConstantBuffer<CB_VS_vertexshader_grid>				m_CB_VS_vertexshader_grid;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		m_pDepthStencilStateTransparant;
+
+		// Ocean
+		Ocean												m_Ocean;
+		VertexShader										m_VertexShaderOcean;
+		PixelShader											m_PixelShaderOcean;
+		ComputeShader										m_ComputeShaderOcean;
+		ConstantBuffer<PerlinCB>							m_CB_CS_Perlin;
+		ConstantBuffer<OceanCB>								m_CB_VS_Ocean;
+
+	private:
+		bool InitDirectX(HWND hWnd);
+		bool InitShaders();
+		bool InitScene();
+	};
+}
+
+#endif // !_GRAPHICS_H_
+
