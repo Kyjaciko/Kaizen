@@ -9,56 +9,109 @@ namespace windows
 {
 	WindowFactory::~WindowFactory()
 	{
-		if (!m_hWnd) return;
+		if (!m_hWnd) 
+			return;
 
-		// Unregister the window class and destroy the window.
 		UnregisterClass(m_wideClassName.c_str(), m_hInstance);
 		DestroyWindow(m_hWnd);
 	}
 
-	bool WindowFactory::Init(WindowContainer* pWindowContainer, HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width, int height)
+	bool WindowFactory::Init(WindowContainer* pWindowContainer, HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width, int height, Types::WindowFlags flags)
 	{
+		// Direct Composition must be used or transparancy won't work!
+		VALIDATE_TRANSPARENCY(flags);
+
+		const bool fullscreen = Helpers::AreFlagsEnabled(flags, Types::WindowFlags::Fullscreen);
+		const bool transparent = Helpers::AreFlagsEnabled(flags, Types::WindowFlags::Transparent);
+
 		m_hInstance		 = hInstance;
 		m_windowName	 = windowTitle;
 		m_className		 = windowClass;
-		m_wideWindowName = StringToWide(m_windowName);
-		m_wideClassName  = StringToWide(m_className);
-		m_width          = width;
-		m_height		 = height;
+		m_wideWindowName = StringHelper::StringToWide(m_windowName);
+		m_wideClassName  = StringHelper::StringToWide(m_className);
+
+		if (fullscreen)
+		{
+			m_width = GetSystemMetrics(SM_CXSCREEN);
+			m_height = GetSystemMetrics(SM_CYSCREEN);
+		}
+		else
+		{
+			m_width = width;
+			m_height = height;
+		}
 
 		// Register the window class.
 		RegisterWindowClass();
 
-		// Adjust if needed for the title and sidebars.
-		RECT wr;
-		wr.left   = 50;
-		wr.top	  = 50;
-		wr.right  = wr.left + m_width;
-		wr.bottom = wr.top + m_height;
-		AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+		// Determine window styles.
+		DWORD style = WS_OVERLAPPEDWINDOW;
+		DWORD exStyle = WS_EX_APPWINDOW;
+		if (fullscreen || transparent) 
+			style = WS_POPUP;
+
+		if (transparent)
+		{
+			exStyle |= WS_EX_NOREDIRECTIONBITMAP; // Tested -> Not necessary.
+			exStyle |= WS_EX_NOACTIVATE;
+
+			// Don't show window in ALT+TAB.
+			exStyle &= ~WS_EX_APPWINDOW;
+			exStyle |= WS_EX_TOOLWINDOW;
+
+			// Enable transparency.
+			exStyle |= WS_EX_LAYERED;
+			//exStyle |= WS_EX_TRANSPARENT; -> Dynamically adjusted while rendering.
+		}
+
+		RECT wr = { 0, 0, m_width, m_height };
+		if (!fullscreen && !transparent)
+		{
+			// Adjust if needed for the title and sidebars.
+			wr.left = 50;
+			wr.top = 50;
+			wr.right = wr.left + m_width;
+			wr.bottom = wr.top + m_height;
+			AdjustWindowRect(&wr, style, FALSE);
+		}
 
 		// Create the actual window.
 		m_hWnd = CreateWindowEx(
-			WS_EX_APPWINDOW,		// Extended window style. Currently using the default extended window style.
+			exStyle,
 			m_wideClassName.c_str(),
 			m_wideClassName.c_str(),
-			WS_OVERLAPPEDWINDOW,	// Window style. Currently using the default window style.
-			wr.left,				// X position of the window. If this is CW_USEDEFAULT, the system chooses the X position.
-			wr.top,					// Y position of the window. If this is CW_USEDEFAULT, the system chooses the Y position.
-			wr.right - wr.left, 	// Width of the window. If this is CW_USEDEFAULT, the system chooses the width.
-			wr.bottom - wr.top,		// Height of the window. If this is CW_USEDEFAULT, the system chooses the height.
-			nullptr,				// Handle to the parent window. If this is NULL, the window has no parent.
-			nullptr, 				// Handle to the menu. If this is NULL, the window has no menu.
-			m_hInstance,			// Handle to the instance of module to be sued with this window.
-			pWindowContainer        // Pointer to any value to be passed to the window procedure.
+			style,
+			fullscreen ? 0 : wr.left,
+			fullscreen ? 0 : wr.top,
+			fullscreen ? m_width : (wr.right - wr.left),
+			fullscreen ? m_height : (wr.bottom - wr.top),
+			nullptr,
+			nullptr,
+			m_hInstance,
+			pWindowContainer
 		);
 
-		if (!m_hWnd) return false;
+		if (!m_hWnd) 
+			return false;
 
 		// Bring the window up on the screen and set it as the main focus.
 		ShowWindow(m_hWnd, SW_SHOW);
 		SetForegroundWindow(m_hWnd);
 		SetFocus(m_hWnd);
+
+		if (transparent)
+		{
+			NOTIFYICONDATA nid = {};
+			nid.cbSize = sizeof(NOTIFYICONDATA);
+			nid.hWnd = m_hWnd;                     // Window die berichten ontvangt
+			nid.uID = 1;                         // Unieke ID
+			nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+			nid.uCallbackMessage = WM_APP + 1;   // Custom message
+			nid.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(101));
+			wcscpy_s(nid.szTip, L"My applicatie");
+
+			Shell_NotifyIcon(NIM_ADD, &nid);
+		}
 
 		return true;
 	}
@@ -99,7 +152,6 @@ namespace windows
 			return 0;
 		default:
 		{
-			// Get the pointer to the WindowContainer class.
 			WindowContainer* const p_window = reinterpret_cast<WindowContainer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 			
 			// Forward message to the WindowContainer class handler.
@@ -118,7 +170,8 @@ namespace windows
 			// We will call a different WindowProc that will redirect the messages to the WindowContainer class.
 			const CREATESTRUCT* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
 			WindowContainer* p_window = reinterpret_cast<WindowContainer*>(pCreate->lpCreateParams);
-			if (!p_window) exit(-1);
+			if (!p_window) 
+				exit(-1);
 
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(p_window));
 			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(HandleMsgRedirect));
@@ -133,19 +186,18 @@ namespace windows
 	{
 		WNDCLASSEX wc;
 		wc.cbSize		 = sizeof(WNDCLASSEX);
-		wc.style		 = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; // Flags [HRedraw and VRedraw] to redraw the window when it is resized.
-		wc.lpfnWndProc	 = HandleMsgSetup;					   // Pointer to the window procedure for handling messages for this window.
-		wc.cbClsExtra	 = 0;								   // Extra bytes to allocate following the class structure.
-		wc.cbWndExtra	 = 0;								   // Extra bytes to allocate following the window instance.
-		wc.hInstance	 = m_hInstance;						   // Handle to the that contains the window procedure.
-		wc.hIcon		 = LoadIcon(NULL, IDI_APPLICATION);    // Handle to the class icon (must be a handle to an icon resource). Currently using the default icon.
-		wc.hCursor		 = LoadCursor(NULL, IDC_ARROW);		   // Handle to the class cursor. Currently using the default arrow cursor. If this is NULL, we have to explicitly set the cursor's shape each time it enters the window.
-		wc.hbrBackground = NULL;      						   // Handle to the class background brush for the window's background color.
-		wc.lpszMenuName  = NULL;							   // Pointer to a null terminated string for the menu.
-		wc.lpszClassName = m_wideClassName.c_str();			   // Pointer to a null terminated string for the class name.
-		wc.hIconSm		 = LoadIcon(NULL, IDI_APPLICATION);	   // Handle to the small icon that appears in the taskbar and in the window's title bar. Currently using the default icon.
+		wc.style		 = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+		wc.lpfnWndProc	 = HandleMsgSetup;
+		wc.cbClsExtra	 = 0;
+		wc.cbWndExtra	 = 0;
+		wc.hInstance	 = m_hInstance;
+		wc.hIcon		 = LoadIcon(NULL, IDI_APPLICATION);
+		wc.hCursor		 = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = NULL;
+		wc.lpszMenuName  = NULL;
+		wc.lpszClassName = m_wideClassName.c_str();
+		wc.hIconSm		 = LoadIcon(NULL, IDI_APPLICATION);
 
-		// Register the window class.
 		RegisterClassEx(&wc);
 	}
 }

@@ -9,6 +9,7 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
+#include "../WindowsTypes.h"
 #include "../Platform/WindowContainer.h"
 #include "../Platform/Timer/HPTimer.h"
 
@@ -16,16 +17,18 @@
 // Class name: Engine
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace EngineName
+namespace Kaizen
 {
 	class Engine : public windows::WindowContainer
 	{
 	public:
-		bool Init(HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width = 800, int height = 600);
+		~Engine();
+
+		bool Init(HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width, int height, windows::Types::WindowFlags flags);
 		void Run();
 
 	private:
-		HPTimer m_hpTimer;
+		HPTimer* m_hpTimer = nullptr;
 
 	private:
 		void Update(double deltaTime);

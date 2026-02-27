@@ -10,25 +10,41 @@ namespace windows
 {
 	WindowContainer::WindowContainer()
 	{
+		m_WindowFactory = new WindowFactory();
+		m_Keyboard		= new Keyboard();
+		m_Mouse			= new Mouse();
+		m_gfx			= new DirectX11::Graphics();
+
 		static bool raw_input_initialized = false;
 		if (!raw_input_initialized)
 		{
+			// Mouse follows keyboard focus.
 			RAWINPUTDEVICE raw_input_device;
-			raw_input_device.usUsagePage = 0x01;	// Generic desktop controls
-			raw_input_device.usUsage     = 0x02;	// Mouse
-			raw_input_device.dwFlags	 = 0;       // Flags
-			raw_input_device.hwndTarget  = nullptr; // No target window, so it follows keyboard focus.
+			raw_input_device.usUsagePage = 0x01;
+			raw_input_device.usUsage     = 0x02;
+			raw_input_device.dwFlags	 = 0;
+			raw_input_device.hwndTarget  = nullptr;
 
-			if (RegisterRawInputDevices(&raw_input_device, 1, sizeof(raw_input_device)) == FALSE) exit(-1);
+			if (RegisterRawInputDevices(&raw_input_device, 1, sizeof(raw_input_device)) == FALSE) 
+				exit(-1);
 
 			raw_input_initialized = true;
 		}
 	}
 
+	WindowContainer::~WindowContainer()
+	{
+		delete m_WindowFactory;
+		delete m_Keyboard;
+		delete m_Mouse;
+		delete m_gfx;
+	}
+
 	LRESULT WindowContainer::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		// Dear ImGui is handling the message.
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
-			return true; // ImGui is handling the message.
+			return true;
 
 		switch (uMsg)
 		{
@@ -40,30 +56,30 @@ namespace windows
 		case WM_KEYDOWN:
 		{
 			unsigned char key = static_cast<unsigned char>(wParam);
-			if (m_keyboard.AreKeysAutoRepeat())
-				m_keyboard.OnKeyPress(key);
+			if (m_Keyboard->AreKeysAutoRepeat())
+				m_Keyboard->OnKeyPress(key);
 			else
 			{
-				const bool was_pressed = lParam & 0x40000000; // Has been pressed before? Check bit 30.
-				if (!was_pressed) m_keyboard.OnKeyPress(key);
+				const bool was_pressed = lParam & 0x40000000;   // Has been pressed before? Check bit 30.
+				if (!was_pressed) m_Keyboard->OnKeyPress(key);
 			}
 			return 0;
 		}
 		case WM_KEYUP:
 		{
 			unsigned char key = static_cast<unsigned char>(wParam);
-			m_keyboard.OnKeyRelease(key);
+			m_Keyboard->OnKeyRelease(key);
 			return 0;
 		}
 		case WM_CHAR:
 		{
 			unsigned char character = static_cast<unsigned char>(wParam);
-			if (m_keyboard.AreCharsAutoRepeat()) 
-				m_keyboard.OnChar(character);
+			if (m_Keyboard->AreCharsAutoRepeat())
+				m_Keyboard->OnChar(character);
 			else
 			{
-				const bool was_pressed = lParam & 0x40000000;   // Has been pressed before? Check bit 30.
-				if (!was_pressed) m_keyboard.OnChar(character);
+				const bool was_pressed = lParam & 0x40000000;    // Has been pressed before? Check bit 30.
+				if (!was_pressed) m_Keyboard->OnChar(character);
 			}
 			return 0;
 		}
@@ -76,42 +92,42 @@ namespace windows
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnLeftPress(x, y);
+			m_Mouse->OnLeftPress(x, y);
 			return 0;
 		}
 		case WM_LBUTTONUP:
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnLeftRelease(x, y);
+			m_Mouse->OnLeftRelease(x, y);
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnRightPress(x, y);
+			m_Mouse->OnRightPress(x, y);
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnRightRelease(x, y);
+			m_Mouse->OnRightRelease(x, y);
 			return 0;
 		}
 		case WM_MBUTTONDOWN:
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnMiddlePress(x, y);
+			m_Mouse->OnMiddlePress(x, y);
 			return 0;
 		}
 		case WM_MBUTTONUP:
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnMiddleRelease(x, y);
+			m_Mouse->OnMiddleRelease(x, y);
 			return 0;
 		}
 		case WM_MOUSEWHEEL:
@@ -120,21 +136,20 @@ namespace windows
 			int y = HIWORD(lParam);
 			int wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam);
 			if (wheel_delta > 0)
-				m_mouse.OnWheelUp(x, y);
+				m_Mouse->OnWheelUp(x, y);
 			else
-				m_mouse.OnWheelDown(x, y);
+				m_Mouse->OnWheelDown(x, y);
 			return 0;
 		}
 		case WM_MOUSEMOVE:
 		{
 			int x = LOWORD(lParam);
 			int y = HIWORD(lParam);
-			m_mouse.OnMouseMove(x, y);
+			m_Mouse->OnMouseMove(x, y);
 			return 0;
 		}
 		case WM_INPUT:
 		{
-			// Handle raw input.
 			UINT data_size = sizeof(RAWINPUTHEADER);
 
 			GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, nullptr, &data_size, sizeof(RAWINPUTHEADER));
@@ -145,9 +160,7 @@ namespace windows
 				{
 					RAWINPUT* raw_input = reinterpret_cast<RAWINPUT*>(raw_data.get());
 					if (raw_input->header.dwType == RIM_TYPEMOUSE)
-					{
-						m_mouse.OnMouseRawMove(raw_input->data.mouse.lLastX, raw_input->data.mouse.lLastY);
-					}
+						m_Mouse->OnMouseRawMove(raw_input->data.mouse.lLastX, raw_input->data.mouse.lLastY);
 				}
 			}
 

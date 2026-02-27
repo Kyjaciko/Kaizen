@@ -15,6 +15,7 @@
 // Structure: CB_VS_vertexshader
 ////////////////////////////////////////////////////////////////////////////////
 
+// Must be 16 byte aligned.
 namespace DirectX11
 {
 	struct CB_VS_vertexshader
@@ -54,6 +55,32 @@ namespace DirectX11
 		float				dynamicLightAttenuationA;
 		float				dynamicLightAttenuationB;
 		float				dynamicLightAttenuationC;
+	};
+
+
+
+	// For everything (usual slot: b0)
+	struct CB_Frame 
+	{
+		DirectX::XMMATRIX viewProjectionMatrix;
+	};
+
+	// For all changing objects (usual slot: b1)
+	struct CB_Object 
+	{
+		DirectX::XMMATRIX worldMatrix;
+	};
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Specific data for components (usual slot: b2)
+////////////////////////////////////////////////////////////////////////////////
+
+namespace DirectX11
+{
+	struct CB_SpriteData
+	{
+		DirectX::XMFLOAT4 uvTransform; // x=u, y=v, z=width, w=height
 	};
 }
 

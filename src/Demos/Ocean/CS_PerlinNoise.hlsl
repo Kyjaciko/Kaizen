@@ -32,7 +32,7 @@ float RidgedNoise(float perlin)
 
 float2 RandomGradient(uint ix, uint iy)
 {
-    const uint w = 8 * 4; // 4 = sizeof(uint)
+    const uint w = 8 * 4; // 4 = sizeof(uint).
     const uint s = w / 2;
     uint a = ix, b = iy;
     a *= 3284157443;

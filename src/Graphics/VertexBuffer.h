@@ -19,8 +19,20 @@
 
 namespace DirectX11
 {
+	// test For storage in Mesh.
+	class IVertexBuffer
+	{
+	public:
+		virtual ~IVertexBuffer() = default;
+
+		virtual ID3D11Buffer* const* GetAddressOf() const = 0;
+		virtual const UINT* StridePointer() const = 0;
+	};
+
+	//
+
 	template<typename T>
-	class VertexBuffer
+	class VertexBuffer : public IVertexBuffer
 	{
 	public:
 		VertexBuffer() {}
@@ -67,10 +79,10 @@ namespace DirectX11
 		}
 
 		ID3D11Buffer* Get() const { return m_pVertexBuffer.Get(); }
-		ID3D11Buffer* const * GetAddressOf() const { return m_pVertexBuffer.GetAddressOf(); }
+		virtual ID3D11Buffer* const * GetAddressOf() const override { return m_pVertexBuffer.GetAddressOf(); }
 		UINT VertexCount() const { return m_VertexCount; }
 		const UINT Stride() const { return m_Stride; }
-		const UINT* StridePointer() const { return &m_Stride; }
+		virtual const UINT* StridePointer() const override { return &m_Stride; }
 
 	private:
 		UINT									m_VertexCount;

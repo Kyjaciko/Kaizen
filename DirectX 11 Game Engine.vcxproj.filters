@@ -55,6 +55,45 @@
     <Filter Include="Source Files\Demos\Ocean">
       <UniqueIdentifier>{b0bac26c-eecb-4210-ac9c-901c4b811936}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Interface">
+      <UniqueIdentifier>{41fc3466-a401-4bd9-9c64-a19b13dd5d4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interface\Commands">
+      <UniqueIdentifier>{7ff13cbd-d4a5-4c56-83a4-5215c3a38151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interface\Components">
+      <UniqueIdentifier>{01a4c772-21a9-4648-93a0-a00f124c398b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interface\Components\Sprites">
+      <UniqueIdentifier>{4d081f66-83e2-4079-8181-9f55d92c1bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interface\Data Structures">
+      <UniqueIdentifier>{cfe82333-489b-486f-abd5-418622c1d42a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Automatisation">
+      <UniqueIdentifier>{f6572574-fdeb-4d7d-9584-c3fae0cec702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Containers">
+      <UniqueIdentifier>{3406118e-bc34-4083-8de4-e6acfd424509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Demos\Where Penguins Dwell">
+      <UniqueIdentifier>{39884823-1dfc-4c8b-9c92-d4f3e07780b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Demos\Where Penguins Dwell\Systems">
+      <UniqueIdentifier>{b4ca3b5f-0e06-4f70-83ac-9b18fafab367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Demos\Where Penguins Dwell\Platform">
+      <UniqueIdentifier>{008025e8-e33d-4baf-ac1e-625fcefeaebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Containers\Helpers">
+      <UniqueIdentifier>{58263cf9-f568-42b7-ad85-e0c88610d38f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{49e872bf-bc0e-457e-ab73-ad49c8c9f0f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Demos\Where Penguins Dwell\Core">
+      <UniqueIdentifier>{e266d88a-4644-4cd6-b334-dcbc829a1ffd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -155,6 +194,12 @@
     </ClCompile>
     <ClCompile Include="src\Demos\Ocean\Projector.cpp">
       <Filter>Source Files\Demos\Ocean</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshResource.cpp">
+      <Filter>Header Files\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowEnumerator.cpp">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +340,108 @@
     <ClInclude Include="src\Demos\Ocean\Projector.h">
       <Filter>Header Files\Demos\Ocean</Filter>
     </ClInclude>
+    <ClInclude Include="src\StaticSpriteComponent.h">
+      <Filter>Header Files\Interface\Components\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IComponent.h">
+      <Filter>Header Files\Interface\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderTypes.h">
+      <Filter>Header Files\Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshResource.h">
+      <Filter>Header Files\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="IComponentArray.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentArray.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemManager.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="Coordinator.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimitiveFactory.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files\Graphics\Automatisation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationComponent.h">
+      <Filter>Header Files\Interface\Components\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Header Files\Interface\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowEnumerator.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowSystem.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementSystem.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Containers\UniformGrid.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicStructures.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="MortonCode3D.h">
+      <Filter>Header Files\Containers\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="MortonCode2D.h">
+      <Filter>Header Files\Containers\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Constants.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Types.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsTypes.h">
+      <Filter>Header Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsHelpers.h">
+      <Filter>Header Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Core\Constants.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Core\Settings.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\Shaders\vertexshader.hlsl">
@@ -326,6 +473,12 @@
     </FxCompile>
     <FxCompile Include="src\Demos\Ocean\CS_PerlinNoise.hlsl">
       <Filter>Header Files\Demos\Ocean</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\PS_StaticSpriteShader.hlsl">
+      <Filter>Header Files\Interface\Components\Sprites</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\VS_StaticSpriteShader.hlsl">
+      <Filter>Header Files\Interface\Components\Sprites</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -10,11 +10,13 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	HRESULT hr = CoInitialize(nullptr);
 	if (FAILED(hr)) return -1;
 
-	EngineName::Engine engine;
-	if (engine.Init(hInstance, "Invasion", "DirectX11WindowClass", 5120, 1440))
+	Kaizen::Engine* engine = new Kaizen::Engine();
+	if (engine->Init(hInstance, "Kaizen Game Engine", "Kaizen", 640, 480,
+		windows::Types::WindowFlags::Fullscreen | windows::Types::WindowFlags::Transparent))
 	{
-		engine.Run();
+		engine->Run();
 	}
 
+	delete engine;
 	return 0;
 }

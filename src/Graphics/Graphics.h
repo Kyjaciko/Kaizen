@@ -33,6 +33,41 @@
 
 #include "../Demos/Demo.h"
 
+
+
+//
+#include <random>
+#include "../Settings.h"
+#include "../ResourceManager.h"
+#include "../MeshResource.h"
+#include "../Coordinator.h"
+#include "../RenderSystem.h"
+#include "../Material.h"
+#include "../PrimitiveFactory.h"
+#include "../Containers/UniformGrid.h"
+#include "../Components.h"
+#include "../CollisionSystem.h"
+#include "../WindowSystem.h"
+#include "../MovementSystem.h"
+#include "../WindowsTypes.h"
+#include "../WindowsHelpers.h"
+#include "../Demos/Where Penguins Dwell/Core/Settings.h"
+
+//////////////
+// SETTINGS //
+//////////////
+
+#if USE_DIRECT_COMPOSITION
+	#include <dcomp.h>
+	#pragma comment(lib, "dcomp.lib")
+#endif
+
+#if USE_DIRECT_COMPOSITION
+	using SwapChainType = IDXGISwapChain1;
+#else
+	using SwapChainType = IDXGISwapChain;
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Graphics
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,14 +77,15 @@ namespace DirectX11
 	class Graphics
 	{
 	public:
-		bool Init(HWND hWnd, int width, int height);
-		void RenderFrame(double deltaTime);
+		bool Init(HWND hWnd, int width, int height, windows::Types::WindowFlags flags);
+		void RenderFrame(HWND hWnd, double deltaTime);
 
 		Camera3D* GetCamera() { return &m_Camera; }
 		GameObject*  GetGameObject()  { return &m_GameObject; }
 		Light* GetLight() { return &m_Light; }
 
 	private:
+		float m_Alfa;
 		int m_WindowWidth;
 		int m_WindowHeight;
 
@@ -58,10 +94,18 @@ namespace DirectX11
 		Camera2D											m_Camera2D;
 		Camera3D											m_Camera;
 
-		Microsoft::WRL::ComPtr<ID3D11Device>				m_pDevice;			 // Used to create the buffers.
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext>			m_pDeviceContext;    // Used to set different resources for rendering.
-		Microsoft::WRL::ComPtr<IDXGISwapChain>				m_pSwapChain;        // Swaps out frames, using the back buffer, when rendering.
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		m_pRenderTargetView; // Used to determine where we will render our back buffer to.
+		Microsoft::WRL::ComPtr<ID3D11Device>				m_pDevice;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext>			m_pDeviceContext;
+		Microsoft::WRL::ComPtr<SwapChainType>				m_pSwapChain;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		m_pRenderTargetView;
+
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		m_pDepthStencilView;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D>				m_pDepthStencilBuffer;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		m_pDepthStencilState;
+
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState>		m_pRasterizerState;
+		Microsoft::WRL::ComPtr<ID3D11BlendState>			m_pBlendState;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>			m_pSamplerState;
 
 		// TEST
 		VertexShader										m_VertexShaderLine;
@@ -69,10 +113,10 @@ namespace DirectX11
 		// TEST
 
 		VertexShader										m_VertexShader;
-		VertexShader										m_VertexShaderSprite;
+		//VertexShader										m_VertexShaderSprite;
 		PixelShader											m_PixelShader;
 		PixelShader											m_PixelShaderWithNoLight;
-		PixelShader											m_PixelShaderSprite;
+		//PixelShader											m_PixelShaderSprite;
 
 		ConstantBuffer<CB_VS_vertexshader>					m_CB_VS_vertexshader;
 		//ConstantBuffer<CB_PS_pixelshader>					m_CB_PS_pixelshader;
@@ -83,18 +127,9 @@ namespace DirectX11
 		Light												m_Light;
 		Sprite												m_Sprite;
 
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		m_pDepthStencilView;
-		Microsoft::WRL::ComPtr<ID3D11Texture2D>				m_pDepthStencilBuffer; // Used to store the depth buffer data.
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		m_pDepthStencilState;  // Used to determine how the depth buffer is used.
-
-		Microsoft::WRL::ComPtr<ID3D11RasterizerState>		m_pRasterizerState;	// Used to determine how the triangles are rendered.
-		Microsoft::WRL::ComPtr<ID3D11RasterizerState>		m_pRasterizerCullFrontState;
-		Microsoft::WRL::ComPtr<ID3D11BlendState>			m_pBlendState;		// Used to determine how the triangles are blended together.
-
 		std::unique_ptr<DirectX::SpriteBatch>				m_pSpriteBatch;
 		std::unique_ptr<DirectX::SpriteFont>				m_pSpriteFont;
 
-		Microsoft::WRL::ComPtr<ID3D11SamplerState>			m_pSamplerState;	// Used to determine how the texture is sampled.
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_pPinkTexture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_pGrassTexture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_pTomNookTexture;
@@ -114,10 +149,55 @@ namespace DirectX11
 		ConstantBuffer<PerlinCB>							m_CB_CS_Perlin;
 		ConstantBuffer<OceanCB>								m_CB_VS_Ocean;
 
+
+
+		// 
+		//Kaizen::Graphics::TextureManager					m_TextureManager;
+		//ConstantBuffer<CB_VS_vertexshader_2d>				m_CB_VS_vertexshader_2d;
+		//VertexShader										m_VertexShader;
+
+		Kaizen::Logic::Coordinator				m_Coordinator;
+
+		std::shared_ptr<Kaizen::Resources::PrimitiveFactory>	m_AssetManager;
+		std::shared_ptr<Kaizen::Resources::TextureManager>		m_TextureManager;
+		std::shared_ptr<Kaizen::Resources::VertexShaderManager>	m_VertexShaderManager;
+		std::shared_ptr<Kaizen::Resources::PixelShaderManager>	m_PixelShaderManager;
+
+		std::shared_ptr<Kaizen::Graphics::RenderSystem>			m_RenderSystem;
+		std::shared_ptr<Kaizen::Graphics::TransformSystem>		m_TransformSystem;
+		std::shared_ptr<Kaizen::Graphics::AnimationSystem>		m_AnimationSystem;
+		std::shared_ptr<WherePenguinsDwell::CollisionSystem>	m_CollisionSystem;
+		std::shared_ptr<WherePenguinsDwell::Systems::WindowSystem>		m_WindowSystem;
+		std::shared_ptr<WherePenguinsDwell::MovementSystem>		m_MovementSystem;
+
+		ConstantBuffer<CB_Frame>	m_CB_Frame;
+		ConstantBuffer<CB_Object>	m_CB_Object;
+
+		Kaizen::Types::ResourceID	m_SpritesheetTextureID;
+		Kaizen::Types::ResourceID	m_VertexShaderSprite;
+		Kaizen::Types::ResourceID	m_PixelShaderSprite;
+
+		std::shared_ptr<Kaizen::Container::UniformGrid<WherePenguinsDwell::Components::ColliderBox>>	m_UniformGrid;
+
+#if USE_DIRECT_COMPOSITION
+		Microsoft::WRL::ComPtr<IDCompositionDevice> m_pDCompDevice;
+		Microsoft::WRL::ComPtr<IDCompositionTarget> m_pDCompTarget;
+		Microsoft::WRL::ComPtr<IDCompositionVisual> m_pDCompVisual;
+#endif
+
 	private:
 		bool InitDirectX(HWND hWnd);
+
+#if USE_DIRECT_COMPOSITION
+		bool InitDirectXForComposition(HWND hWnd);
+#else
+		bool InitDirectXForHWND(HWND hWnd);
+#endif
+
 		bool InitShaders();
 		bool InitScene();
+
+		void GetDearImGuiInput(HWND hWnd);
 	};
 }
 

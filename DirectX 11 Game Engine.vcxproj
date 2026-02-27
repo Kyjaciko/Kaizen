@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MeshResource.cpp" />
     <ClCompile Include="src\Demos\Ocean\Projector.cpp" />
     <ClCompile Include="src\Graphics\InfiniteGrid.cpp" />
     <ClCompile Include="src\Demos\Ocean\Ocean.cpp" />
@@ -188,14 +189,36 @@
     <ClCompile Include="src\Platform\Input\MouseEvent.cpp" />
     <ClCompile Include="src\Platform\WindowContainer.cpp" />
     <ClCompile Include="src\Platform\WindowFactory.cpp" />
+    <ClCompile Include="WindowEnumerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\NOTE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="BasicStructures.h" />
+    <ClInclude Include="Components.h" />
+    <ClInclude Include="CollisionSystem.h" />
+    <ClInclude Include="ComponentArray.h" />
+    <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Core\Constants.h" />
+    <ClInclude Include="Coordinator.h" />
+    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="IComponentArray.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MeshResource.h" />
+    <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="MortonCode2D.h" />
+    <ClInclude Include="MortonCode3D.h" />
+    <ClInclude Include="MovementSystem.h" />
+    <ClInclude Include="PrimitiveFactory.h" />
+    <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="src\Demos\Ocean\Projector.h" />
     <ClInclude Include="src\Demos\Demo.h" />
     <ClInclude Include="src\Demos\Ocean\Ocean.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Core\Settings.h" />
     <ClInclude Include="src\Graphics\InfiniteGrid.h" />
     <ClInclude Include="src\Graphics\AxisGizmo.h" />
     <ClInclude Include="src\Graphics\Camera2D.h" />
@@ -208,6 +231,9 @@
     <ClInclude Include="src\Graphics\Model.h" />
     <ClInclude Include="src\Graphics\RenderableGameObject.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
+    <ClInclude Include="src\IComponent.h" />
+    <ClInclude Include="src\RenderTypes.h" />
+    <ClInclude Include="src\StaticSpriteComponent.h" />
     <ClInclude Include="src\StringHelper.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Platform\Debug\COMException.h" />
@@ -237,6 +263,16 @@
     <ClInclude Include="src\Platform\Timer\HPTimer.h" />
     <ClInclude Include="src\Platform\WindowContainer.h" />
     <ClInclude Include="src\Platform\WindowFactory.h" />
+    <ClInclude Include="src\Constants.h" />
+    <ClInclude Include="src\Types.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="SystemManager.h" />
+    <ClInclude Include="TransformComponent.h" />
+    <ClInclude Include="src\Containers\UniformGrid.h" />
+    <ClInclude Include="WindowsHelpers.h" />
+    <ClInclude Include="WindowsTypes.h" />
+    <ClInclude Include="WindowEnumerator.h" />
+    <ClInclude Include="WindowSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Demos\Ocean\CS_PerlinNoise.hlsl">
@@ -295,6 +331,23 @@
     </FxCompile>
     <FxCompile Include="src\Demos\Ocean\VS_Ocean.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\PS_StaticSpriteShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\Shaders\VS_StaticSpriteShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>

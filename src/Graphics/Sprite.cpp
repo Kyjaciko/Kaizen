@@ -6,13 +6,14 @@
 
 namespace DirectX11
 {
-	bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, float width, float height, const std::string& spritePath, ConstantBuffer<CB_VS_vertexshader_2d>& cb_vs_VertexShader2D)
+	bool Sprite::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, float width, float height, Kaizen::Types::ResourceID textureID/*const std::string& spritePath*/, ConstantBuffer<CB_VS_vertexshader_2d>& cb_vs_VertexShader2D)
 	{
 		m_pDeviceContext = deviceContext;
 		if (!m_pDeviceContext) return false;
 
 		m_pCB_VS_VertexShader2D = &cb_vs_VertexShader2D;
-		m_Texture = std::make_unique<Texture>(device, spritePath, aiTextureType_DIFFUSE);
+		//m_Texture = std::make_unique<Texture>(device, spritePath, aiTextureType_DIFFUSE);
+		m_TextureID = textureID;
 
 		std::vector<Vertex2D> vertex_data =
 		{
@@ -48,7 +49,7 @@ namespace DirectX11
 		m_pCB_VS_VertexShader2D->data.wvpMatrix = wvp_matrix;
 		m_pCB_VS_VertexShader2D->ApplyChanges();
 
-		m_pDeviceContext->PSSetShaderResources(0, 1, m_Texture->GetTextureResourceViewAddress());
+		//m_pDeviceContext->PSSetShaderResources(0, 1, m_Texture->GetTextureResourceViewAddress());
 
 		const UINT offsets = 0;
 		m_pDeviceContext->IASetVertexBuffers(0, 1, m_Vertices.GetAddressOf(), m_Vertices.StridePointer(), &offsets);

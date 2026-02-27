@@ -24,17 +24,15 @@ namespace windows
 	{
 	public:
 		WindowContainer();
+		~WindowContainer();
 
 		LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:
-		WindowFactory			m_windowFactory;
-		Keyboard				m_keyboard;
-		Mouse					m_mouse;
-		DirectX11::Graphics		m_gfx;
-
-	private:
-
+		WindowFactory*			m_WindowFactory;
+		Keyboard*				m_Keyboard;
+		Mouse*					m_Mouse;
+		DirectX11::Graphics*	m_gfx;
 	};
 }
 

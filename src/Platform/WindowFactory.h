@@ -17,6 +17,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
+#include "../Settings.h"
+#include "../WindowsTypes.h"
+#include "../WindowsHelpers.h"
 #include "Debug/ErrorLogger.h"
 
 //////////////////////////
@@ -39,10 +42,13 @@ namespace windows
 	public:
 		~WindowFactory();
 
-		bool Init(WindowContainer* pWindowContainer, HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width = 800, int height = 600);
+		bool Init(WindowContainer* pWindowContainer, HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width, int height, Types::WindowFlags flags);
 		bool HandleMessages();
 
 		HWND GetHWnd() const;
+
+		int GetWidth() const { return m_width; }
+		int GetHeight() const { return m_height; }
 
 	private:
 		int				m_width;
@@ -56,8 +62,6 @@ namespace windows
 		HINSTANCE	    m_hInstance = nullptr;
 
 	private:
-		std::wstring StringToWide(const std::string& str) { return std::wstring(str.begin(), str.end()); }
-
 		void RegisterWindowClass();
 	};
 }

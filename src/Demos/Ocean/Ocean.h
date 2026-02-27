@@ -97,6 +97,9 @@ namespace DirectX11
 		ID3D11UnorderedAccessView* perlinUAV = nullptr;
 		ID3D11ShaderResourceView* perlinSRV = nullptr;
 
+		ID3D11ShaderResourceView* m_FresnelSRV = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>			m_pSamplerStateClamp;
+
 	private:
 		void SetupGrid(ID3D11Device* device);
 		//void SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs);
@@ -105,6 +108,7 @@ namespace DirectX11
 		void SetupInputAssemblerStage(VertexShader& vs);
 
 		void GeneratePerlinNoise(ComputeShader computeShader, double deltaTime);
+		void CreateFresnelTexture(ID3D11Device* device);
 		void CreateUniformGridOfVertices(std::vector<OceanVertex>& vertices, std::vector<DWORD>& indices);
 
 		virtual void UpdateMatrix() override;

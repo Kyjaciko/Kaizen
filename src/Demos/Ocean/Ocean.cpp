@@ -10,6 +10,7 @@ namespace DirectX11
 	{
 		if (perlinUAV) perlinUAV->Release();
 		if (perlinSRV) perlinSRV->Release();
+		if (m_FresnelSRV) m_FresnelSRV->Release();
 	}
 
 	bool Ocean::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<PerlinCB>& cbPerlin, ConstantBuffer<OceanCB>& cbOcean, UINT textureWidth, UINT textureHeight)
@@ -35,6 +36,16 @@ namespace DirectX11
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to initialize index buffer for ocean", false);
 
 		SetupGrid(device);
+
+		// >TEST
+		CD3D11_SAMPLER_DESC sampler_description(D3D11_DEFAULT);
+		hr = device->CreateSamplerState(
+			&sampler_description,
+			m_pSamplerStateClamp.GetAddressOf()
+		);
+		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create sampler state.", false);
+
+		CreateFresnelTexture(device);
 
 		SetPosition(0.0f, 0.0f, 0.0f);
 		SetRotation(0.0f, 0.0f, 0.0f);
@@ -113,7 +124,7 @@ namespace DirectX11
 		m_pCB_VS_Ocean->data.vpMatrix = viewProjectionMatrix; // Camera VP
 		m_pCB_VS_Ocean->data.projectorMatrix = projectorMatrix; // Range * InvProj
 		m_pCB_VS_Ocean->data.cameraPos = pos;
-		m_pCB_VS_Ocean->data.heightScale = 5.0f; // Zet dit hoog genoeg om effect te zien! (bv. 2.0f - 10.0f)
+		m_pCB_VS_Ocean->data.heightScale = 2.f; // Zet dit hoog genoeg om effect te zien! (bv. 2.0f - 10.0f)
 
 		static double time = 0.0f;
 		time += deltaTime;
@@ -127,7 +138,12 @@ namespace DirectX11
 	void Ocean::SetupPixelShaderStage(PixelShader& ps)
 	{
 		m_pDeviceContext->PSSetShader(ps.GetShader(), nullptr, 0);
-		m_pDeviceContext->PSSetShaderResources(0, 1, &perlinSRV);
+		m_pDeviceContext->PSSetConstantBuffers(1, 1, m_pCB_VS_Ocean->GetAddressOf());
+		//m_pDeviceContext->PSSetShaderResources(0, 1, &perlinSRV);
+
+		ID3D11ShaderResourceView* textures[] = { perlinSRV, m_FresnelSRV };
+		m_pDeviceContext->PSSetShaderResources(0, 2, textures);
+		m_pDeviceContext->PSSetSamplers(1, 1, m_pSamplerStateClamp.GetAddressOf());
 	}
 
 	void Ocean::SetupInputAssemblerStage(VertexShader& vs)
@@ -167,6 +183,88 @@ namespace DirectX11
 		m_pDeviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, nullptr);
 		m_pDeviceContext->CSSetShader(nullptr, nullptr, 0);
 		m_pDeviceContext->GenerateMips(perlinSRV);
+	}
+
+	void Ocean::CreateFresnelTexture(ID3D11Device* device)
+	{
+		const int resolution = 256; // Breedte van de lookup table
+		float fresnelData[resolution];
+
+		float n1 = 1.00f; // Lucht
+		float n2 = 1.33f; // brekingsindex Water
+
+		for (int i = 0; i < resolution; ++i)
+		{
+			// De index i gaat van 0..511. Dit mappen we naar cos(theta) van 0.0 tot 1.0.
+			// cosTheta = dot(N, V). 
+			// 0.0 = We kijken parallel aan water (Horizon) -> Veel reflectie
+			// 1.0 = We kijken recht omlaag (Loodrecht) -> Weinig reflectie
+			float cosThetaI = (float)i / (float)(resolution - 1);
+
+			// Zorg dat we niet delen door 0 of wortels van negatieve getallen nemen
+			cosThetaI = std::max(0.0f, std::min(1.0f, cosThetaI));
+
+			// Bereken sin(thetaI) via pythagoras: sin^2 + cos^2 = 1
+			float sinThetaI = sqrt(1.0f - cosThetaI * cosThetaI);
+
+			// Snell's Law: n1 * sin(thetaI) = n2 * sin(thetaT)
+			float sinThetaT = (n1 / n2) * sinThetaI;
+
+			// Totale Interne Reflectie check (zou bij lucht->water niet mogen gebeuren, maar veiligheidshalve)
+			float R = 1.0f;
+			if (sinThetaT * sinThetaT < 1.0f)
+			{
+				float cosThetaT = sqrt(1.0f - sinThetaT * sinThetaT);
+
+				// Fresnel vergelijkingen (Sectie 1.7)
+				// Rs = Perpendicular polarization
+				float Rs_num = (n1 * cosThetaI) - (n2 * cosThetaT);
+				float Rs_den = (n1 * cosThetaI) + (n2 * cosThetaT);
+				float Rs = (Rs_num / Rs_den) * (Rs_num / Rs_den);
+
+				// Rp = Parallel polarization
+				float Rp_num = (n1 * cosThetaT) - (n2 * cosThetaI);
+				float Rp_den = (n1 * cosThetaT) + (n2 * cosThetaI);
+				float Rp = (Rp_num / Rp_den) * (Rp_num / Rp_den);
+
+				// Unpolarized light is het gemiddelde
+				R = (Rs + Rp) * 0.5f;
+			}
+
+			// Opslaan in array
+			fresnelData[i] = std::max(0.0f, std::min(1.0f, R));
+		}
+
+		// --- Texture Aanmaken in DirectX ---
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		texDesc.Width = resolution;
+		texDesc.Height = 1; // 1D lookup, maar we gebruiken Texture2D structuur voor gemak
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R32_FLOAT; // We slaan 1 float per pixel op (R)
+		texDesc.SampleDesc.Count = 1;
+		texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = fresnelData;
+		initData.SysMemPitch = resolution * sizeof(float); // Pitch is breedte in bytes
+
+		ID3D11Texture2D* texture = nullptr;
+		HRESULT hr = device->CreateTexture2D(&texDesc, &initData, &texture);
+		COM_ERROR_IF_FAILED_SHOW(hr, "Failed to create Fresnel texture.");
+
+		// SRV Aanmaken
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = texDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = 1;
+
+		hr = device->CreateShaderResourceView(texture, &srvDesc, &m_FresnelSRV);
+		COM_ERROR_IF_FAILED_SHOW(hr, "Failed to create Fresnel SRV.");
+
+		texture->Release();
 	}
 
 	void Ocean::CreateUniformGridOfVertices(std::vector<OceanVertex>& vertices, std::vector<DWORD>& indices)

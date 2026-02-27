@@ -1,0 +1,34 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: RenderCommands.h
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef _RENDER_COMMANDS_H_
+#define _RENDER_COMMANDS_H_
+
+//////////////
+// INCLUDES //
+//////////////
+
+#include <DirectXMath.h>
+#include <cstdint>
+
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+
+#include "TypeDefines.h"
+
+////////////////////////
+// Rendering Commands //
+////////////////////////
+
+namespace Kaizen::Graphics
+{
+    struct SpriteInstanceData 
+    {
+        DirectX::XMMATRIX worldMatrix;
+        DirectX::XMFLOAT4 uvTransform;
+    };
+}
+
+#endif // !_RENDER_COMMANDS_H_

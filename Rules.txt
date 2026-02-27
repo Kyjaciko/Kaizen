@@ -1,0 +1,11 @@
+4. Moderne C++ vuistregel (belangrijk)
+
+Denk zo:
+
+Ownership? → std::unique_ptr
+
+Shared ownership? → std::shared_ptr
+
+Geen ownership maar verplicht? → reference
+
+Geen ownership en optioneel? → pointer
