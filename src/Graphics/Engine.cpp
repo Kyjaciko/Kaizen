@@ -35,6 +35,16 @@ namespace Kaizen
 		}
 	}
 
+	void Engine::OnShutdown() const noexcept
+	{
+		while (true)
+		{
+			m_hpTimer->Update();
+			if (!m_gfx->OnShutdown(m_WindowFactory->GetHWnd(), m_hpTimer->GetDeltaTime()))
+				break;
+		}
+	}
+
 	void Engine::Update(double deltaTime)
 	{
 		while (!m_Keyboard->IsCharBufferEmpty())

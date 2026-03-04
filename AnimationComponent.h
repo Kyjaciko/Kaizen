@@ -89,7 +89,7 @@ struct AnimationComponent
 {
     float Timer = 0.0f;
     int CurrentFrame = 0;
-    EntityState CurrentState = EntityState::tumbling;
+    EntityState CurrentState = EntityState::reading;
 
     std::unordered_map<EntityState, AnimationData> Animations;
 

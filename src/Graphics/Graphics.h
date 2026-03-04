@@ -52,6 +52,8 @@
 #include "../WindowsTypes.h"
 #include "../WindowsHelpers.h"
 #include "../Demos/Where Penguins Dwell/Core/Settings.h"
+#include "../BehaviourSystem.h"
+#include "../LifeCycleSystem.h"
 
 //////////////
 // SETTINGS //
@@ -79,6 +81,8 @@ namespace DirectX11
 	public:
 		bool Init(HWND hWnd, int width, int height, windows::Types::WindowFlags flags);
 		void RenderFrame(HWND hWnd, double deltaTime);
+
+		[[nodiscard]] bool OnShutdown(HWND hWnd, double deltaTime);
 
 		Camera3D* GetCamera() { return &m_Camera; }
 		GameObject*  GetGameObject()  { return &m_GameObject; }
@@ -169,6 +173,8 @@ namespace DirectX11
 		std::shared_ptr<WherePenguinsDwell::CollisionSystem>	m_CollisionSystem;
 		std::shared_ptr<WherePenguinsDwell::Systems::WindowSystem>		m_WindowSystem;
 		std::shared_ptr<WherePenguinsDwell::MovementSystem>		m_MovementSystem;
+		std::shared_ptr<WherePenguinsDwell::BehaviourSystem>		m_BehaviourSystem;
+		std::shared_ptr<WherePenguinsDwell::LifeCycleSystem>		m_LifeCycleSystem;
 
 		ConstantBuffer<CB_Frame>	m_CB_Frame;
 		ConstantBuffer<CB_Object>	m_CB_Object;

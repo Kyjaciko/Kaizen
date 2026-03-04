@@ -41,8 +41,8 @@ public:
 		currentCallToUpdate = t.QuadPart;
 
 		// FPS limiter -- START
-		/*timeBeginPeriod(1); // Best to call this only once during the whole live of the APP, heavy function
-		int TARGET_FPS = 144;
+		timeBeginPeriod(1); // Best to call this only once during the whole live of the APP, heavy function
+		int TARGET_FPS = 31;
 		double elapsedTime = GetDeltaTime();
 		while (elapsedTime < 1.0 / (TARGET_FPS + 0.5))
 		{
@@ -52,7 +52,7 @@ public:
 			currentCallToUpdate = t.QuadPart;
 			elapsedTime = GetDeltaTime();
 		}
-		timeEndPeriod(1);*/
+		timeEndPeriod(1);
 		// FPS limiter -- END
 	}
 

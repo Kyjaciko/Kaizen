@@ -40,10 +40,16 @@ namespace WherePenguinsDwell
 
                 switch (anim.CurrentState)
                 {
+                case EntityState::zap_walkingLeft:
+                    velocity.y = 0.f;
+                    [[fallthrough]];
                 case EntityState::walkingLeft:
                     velocity.x = -moveProps.walkingSpeed;
                     break;
 
+                case EntityState::zap_walkingRight:
+                    velocity.y = 0.f;
+                    [[fallthrough]];
                 case EntityState::walkingRight:
                     velocity.x = moveProps.walkingSpeed;
                     break;
@@ -58,6 +64,9 @@ namespace WherePenguinsDwell
                     velocity.y = std::min(velocity.y, moveProps.tumbling_terminalVelocity);
                     break;
 
+				case EntityState::splash:
+                case EntityState::exit_walkingLeft:
+                case EntityState::exit_walkingRight:
                 case EntityState::exploding:
                     velocity.y = 0.f;
 					break;

@@ -27,6 +27,8 @@ namespace Kaizen
 		bool Init(HINSTANCE hInstance, std::string windowTitle, std::string windowClass, int width, int height, windows::Types::WindowFlags flags);
 		void Run();
 
+		virtual void OnShutdown() const noexcept override;
+
 	private:
 		HPTimer* m_hpTimer = nullptr;
 

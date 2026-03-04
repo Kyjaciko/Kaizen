@@ -45,6 +45,11 @@ namespace WherePenguinsDwell::Components
 
         float climbingSpeed = 24.f;
     };
+
+    struct TimerComponent
+    {
+        float deadTime = 0.f;
+    };
 }
 
 #endif // !_COMPONENTS_H_

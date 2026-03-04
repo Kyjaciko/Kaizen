@@ -442,6 +442,12 @@
     <ClInclude Include="Components.h">
       <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="BehaviourSystem.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="LifeCycleSystem.h">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\Shaders\vertexshader.hlsl">
@@ -480,5 +486,13 @@
     <FxCompile Include="src\Graphics\Shaders\VS_StaticSpriteShader.hlsl">
       <Filter>Header Files\Interface\Components\Sprites</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\Data\Fonts\Comic_Sans_MS_16.spritefont">
+      <Filter>Header Files\Graphics</Filter>
+    </Image>
+    <Image Include="src\Data\Textures\Full Gimp SpriteSheetV3.png">
+      <Filter>Header Files\Graphics</Filter>
+    </Image>
   </ItemGroup>
 </Project>

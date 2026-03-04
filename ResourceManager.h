@@ -22,6 +22,15 @@
 #include "Constants.h"
 #include "Types.h"
 
+
+#include <filesystem>
+static std::filesystem::path GetExecutableDir2()
+{
+    wchar_t buffer[MAX_PATH];
+    GetModuleFileNameW(NULL, buffer, MAX_PATH);
+    return std::filesystem::path(buffer).parent_path();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ResourceManager
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,9 +107,9 @@ namespace Kaizen::Resources
                 return it->second;
 
             // Load file.
-            std::wstring shader_folder;
+            std::filesystem::path shader_folder = GetExecutableDir2();
 #pragma region DetermineShaderPath
-            if (IsDebuggerPresent())
+            /*if (IsDebuggerPresent())
             {
 #ifdef _DEBUG // Debug mode
 #ifdef _WIN64 // x64
@@ -115,10 +124,10 @@ namespace Kaizen::Resources
                 shader_folder = L"Release\\";
 #endif
 #endif
-            }
+            }*/
 
             std::unique_ptr<DirectX11::VertexShader> vertex_shader = std::make_unique<DirectX11::VertexShader>();
-            vertex_shader->Init<VertexType>(device, shader_folder + StringHelper::StringToWide(shaderPath));
+            vertex_shader->Init<VertexType>(device, shader_folder / StringHelper::StringToWide(shaderPath));
 
             Kaizen::Types::ResourceID id = m_NextID++;
             m_Resources[id] = std::move(vertex_shader);
@@ -140,9 +149,9 @@ namespace Kaizen::Resources
                 return it->second;
 
             // Load file.
-            std::wstring shader_folder;
+            std::filesystem::path shader_folder = GetExecutableDir2();
 #pragma region DetermineShaderPath
-            if (IsDebuggerPresent())
+            /*if (IsDebuggerPresent())
             {
 #ifdef _DEBUG // Debug mode
 #ifdef _WIN64 // x64
@@ -157,10 +166,10 @@ namespace Kaizen::Resources
                 shader_folder = L"Release\\";
 #endif
 #endif
-            }
+            }*/
 
             std::unique_ptr<DirectX11::PixelShader> pixel_shader = std::make_unique<DirectX11::PixelShader>();
-            pixel_shader->Init(device, shader_folder + StringHelper::StringToWide(shaderPath));
+            pixel_shader->Init(device, shader_folder / StringHelper::StringToWide(shaderPath));
 
             Kaizen::Types::ResourceID id = m_NextID++;
             m_Resources[id] = std::move(pixel_shader);

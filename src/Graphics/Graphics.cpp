@@ -3,6 +3,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Graphics.h"
+#include <filesystem>
+
+static std::filesystem::path GetExecutableDir()
+{
+	wchar_t buffer[MAX_PATH];
+	GetModuleFileNameW(NULL, buffer, MAX_PATH);
+	return std::filesystem::path(buffer).parent_path();
+}
 
 namespace DirectX11
 {
@@ -38,14 +46,14 @@ namespace DirectX11
 
 	void Graphics::RenderFrame(HWND hWnd, double deltaTime)
 	{
-		m_CB_PS_light.data.dynamicLightColor = m_Light.m_LightColor;
+		/*m_CB_PS_light.data.dynamicLightColor = m_Light.m_LightColor;
 		m_CB_PS_light.data.dynamicLightStrength = m_Light.m_LightStrength;
 		m_CB_PS_light.data.dynamicLightPosition = m_Light.GetPositionFloat3();
 		m_CB_PS_light.data.dynamicLightAttenuationA = m_Light.m_LightAttenuationA;
 		m_CB_PS_light.data.dynamicLightAttenuationB = m_Light.m_LightAttenuationB;
 		m_CB_PS_light.data.dynamicLightAttenuationC = m_Light.m_LightAttenuationC;
 		m_CB_PS_light.ApplyChanges();
-		m_pDeviceContext->PSSetConstantBuffers(0, 1, m_CB_PS_light.GetAddressOf());
+		m_pDeviceContext->PSSetConstantBuffers(0, 1, m_CB_PS_light.GetAddressOf());*/
 
 		///////////
 		// CLEAR //
@@ -137,89 +145,8 @@ namespace DirectX11
 		// DRAWING 2D //
 		////////////////
 
-		// Static Srptie Sheet
+		// Static Sprite Sheet
 		{
-			/*Kaizen::Resources::PrimitiveFactory		assetManager(m_pDevice);
-			Kaizen::Resources::TextureManager		m_TextureManager(m_pDevice);
-			Kaizen::Resources::VertexShaderManager	m_VertexShaderManager(m_pDevice);
-			Kaizen::Resources::PixelShaderManager	m_PixelShaderManager(m_pDevice);
-
-			Kaizen::Types::ResourceID spritesheet_texture_id = m_TextureManager.Load("src/Data/Textures/Full Gimp SpriteSheetV2.png");
-			Kaizen::Types::ResourceID m_VertexShaderSprite = m_VertexShaderManager.Load<VertexPosUV>(m_pDevice, "VS_StaticSpriteShader.cso");
-			Kaizen::Types::ResourceID m_PixelShaderSprite = m_PixelShaderManager.Load(m_pDevice, "PS_StaticSpriteShader.cso");
-
-			Kaizen::Logic::Coordinator gCoordinator;
-
-			gCoordinator.Init();
-			gCoordinator.RegisterComponent<Kaizen::Graphics::TransformComponent>();
-			gCoordinator.RegisterComponent<Kaizen::Graphics::SpriteComponent>();
-			gCoordinator.RegisterComponent<Kaizen::Graphics::MeshRendererComponent>();
-			gCoordinator.RegisterComponent<AnimationComponent>();
-
-			auto renderSystem = gCoordinator.RegisterSystem<Kaizen::Graphics::RenderSystem>();
-			{
-				Signature signature;
-				signature.set(gCoordinator.GetComponentType<Kaizen::Graphics::TransformComponent>());
-				signature.set(gCoordinator.GetComponentType<Kaizen::Graphics::MeshRendererComponent>());
-				gCoordinator.SetSystemSignature<Kaizen::Graphics::RenderSystem>(signature);
-			}
-
-			auto transformSystem = gCoordinator.RegisterSystem<Kaizen::Graphics::TransformSystem>();
-			{
-				Signature signature;
-				signature.set(gCoordinator.GetComponentType<Kaizen::Graphics::TransformComponent>());
-				gCoordinator.SetSystemSignature<Kaizen::Graphics::TransformSystem>(signature);
-			}
-
-			auto animationSystem = gCoordinator.RegisterSystem<Kaizen::Graphics::AnimationSystem>();
-			{
-				Signature signature;
-				signature.set(gCoordinator.GetComponentType<Kaizen::Graphics::SpriteComponent>());
-				signature.set(gCoordinator.GetComponentType<AnimationComponent>());
-				gCoordinator.SetSystemSignature<Kaizen::Graphics::AnimationSystem>(signature);
-			}
-
-			std::default_random_engine generator;
-			std::uniform_real_distribution<float> randPosition(100.0f, 1000.0f);
-
-			std::vector<Entity> entities(5);
-			for (auto& entity : entities)
-			{
-				entity = gCoordinator.CreateEntity();
-
-				Kaizen::Graphics::TransformComponent transform_comp;
-				transform_comp.Position = { randPosition(generator), randPosition(generator), 0.0f };
-				gCoordinator.AddComponent(
-					entity,
-					transform_comp
-				);
-
-				Kaizen::Graphics::SpriteComponent spriteData;
-				spriteData.w = 240.0f;
-				spriteData.h = 270.0f;
-				spriteData.cols = 8;
-				spriteData.rows = 9;
-				spriteData.uw = 1.0f / 8.0f;
-				spriteData.vh = 1.0f / 9.0f;
-				gCoordinator.AddComponent(entity, spriteData);
-
-				AnimationComponent anim;
-				anim.AddState(EntityState::idle, 10.0f);          // Idle op 10 FPS
-				anim.AddState(EntityState::walkingRight, 15.0f);  // Lopen sneller
-				anim.AddState(EntityState::exploding, 24.0f);     // Explosie heel snel
-				anim.CurrentState = EntityState::walkingRight;
-				gCoordinator.AddComponent(entity, anim);
-
-				auto sharedSpriteMaterial = std::make_shared<Kaizen::Graphics::SpriteMaterial>(m_pDevice.Get(), m_pDeviceContext.Get(), m_VertexShaderManager.GetTexture(m_VertexShaderSprite), m_PixelShaderManager.GetTexture(m_PixelShaderSprite), spritesheet_texture_id);
-				gCoordinator.AddComponent(
-					entity,
-					Kaizen::Graphics::MeshRendererComponent(
-						assetManager.GetPrimitive(PrimitiveType::Quad),
-						sharedSpriteMaterial
-					)
-				);
-			}*/
-
 			m_pDeviceContext->RSSetState(m_pRasterizerState.Get());
 			m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0); // Set the depth stencil state.
 			m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF);
@@ -232,7 +159,10 @@ namespace DirectX11
 
 			m_WindowSystem->Update(m_Coordinator, deltaTime);
 			m_MovementSystem->Update(m_Coordinator, deltaTime);
-			m_CollisionSystem->Update(m_Coordinator);
+			auto collisionEvents = m_CollisionSystem->Update(m_Coordinator);
+			std::vector<Entity> entitiesWithoutContact = m_CollisionSystem->GetEntitiesWithoutContact(m_Coordinator); // TODO: Should only update
+			m_BehaviourSystem->Update(m_Coordinator, collisionEvents, entitiesWithoutContact);
+			m_LifeCycleSystem->Update(m_Coordinator, deltaTime);
 			m_AnimationSystem->Update(m_Coordinator, deltaTime);
 			m_TransformSystem->Update(m_Coordinator);
 			m_RenderSystem->Render(m_Coordinator, m_pDeviceContext.Get(), m_TextureManager.get(), m_CB_Object);
@@ -293,6 +223,23 @@ namespace DirectX11
 		/////////////
 
 		m_pSwapChain->Present(0, 0); // Vsync is OFF.
+	}
+
+	bool Graphics::OnShutdown(HWND hWnd, double deltaTime)
+	{
+		m_BehaviourSystem->ProcessShutdown(m_Coordinator);
+		if (!std::ranges::distance(m_LifeCycleSystem->GetPendingDestructions(m_Coordinator)))
+		{
+			m_LifeCycleSystem->DestroyAll(m_Coordinator);
+			return false;
+		}
+
+		RenderFrame(hWnd, deltaTime);
+		return true;
+
+		//ImGui_ImplDX11_Shutdown();
+		//ImGui_ImplWin32_Shutdown();
+		/*ImGui::DestroyContext();*/
 	}
 
 	bool Graphics::InitDirectX(HWND hWnd)
@@ -397,8 +344,12 @@ namespace DirectX11
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create blend state.", false);
 
 		// Init fonts.
+		OutputDebugStringW(std::filesystem::current_path().c_str());
 		m_pSpriteBatch = std::make_unique<DirectX::SpriteBatch>(m_pDeviceContext.Get());
-		m_pSpriteFont  = std::make_unique<DirectX::SpriteFont>(m_pDevice.Get(), L"src/Data/Fonts/Comic_Sans_MS_16.spritefont");
+		/*if (IsDebuggerPresent())
+			m_pSpriteFont  = std::make_unique<DirectX::SpriteFont>(m_pDevice.Get(), L"../../src/Data/Fonts/Comic_Sans_MS_16.spritefont");
+		else*/
+			m_pSpriteFont = std::make_unique<DirectX::SpriteFont>(m_pDevice.Get(), (GetExecutableDir() / L"Comic_Sans_MS_16.spritefont").c_str());
 
 		// Setup sampler state.
 		CD3D11_SAMPLER_DESC sampler_description(D3D11_DEFAULT);
@@ -559,9 +510,10 @@ namespace DirectX11
 		/////////////////////
 
 		// Macro to determine the shader folder path.
-		std::wstring shader_folder;
+		std::filesystem::path shader_folder = GetExecutableDir(); // See project propteries debugging !!!
+		//OutputDebugStringW(shader_folder.c_str());
 #pragma region DetermineShaderPath
-		if (IsDebuggerPresent())
+		/*if (IsDebuggerPresent())
 		{
 #ifdef _DEBUG // Debug mode
 	#ifdef _WIN64 // x64
@@ -576,7 +528,7 @@ namespace DirectX11
 			shader_folder = L"Release\\";
 	#endif
 #endif
-		}
+		}*/
 
 		////////
 		// 2D //
@@ -608,10 +560,10 @@ namespace DirectX11
 		//if (!m_VertexShaderSprite.Init(m_pDevice, shader_folder + L"vertexshader_2D.cso", layout2D, ARRAYSIZE(layout2D)))
 			//return false;
 
-		if (!m_VertexShaderGrid.Init(m_pDevice, shader_folder + L"vertexshader_grid.cso", layoutGrid, ARRAYSIZE(layoutGrid)))
+		if (!m_VertexShaderGrid.Init(m_pDevice, shader_folder / L"vertexshader_grid.cso", layoutGrid, ARRAYSIZE(layoutGrid)))
 			return false;
 
-		if (!m_VertexShaderOcean.Init(m_pDevice, shader_folder + L"VS_Ocean.cso", layoutOcean, ARRAYSIZE(layoutOcean)))
+		if (!m_VertexShaderOcean.Init(m_pDevice, shader_folder / L"VS_Ocean.cso", layoutOcean, ARRAYSIZE(layoutOcean)))
 			return false;
 
 		//////////////////
@@ -621,13 +573,13 @@ namespace DirectX11
 		//if (!m_PixelShaderSprite.Init(m_pDevice, shader_folder + L"pixelshader_2D.cso"))
 			//return false;
 
-		if (!m_PixelShaderGrid.Init(m_pDevice, shader_folder + L"pixelshader_grid.cso"))
+		if (!m_PixelShaderGrid.Init(m_pDevice, shader_folder / L"pixelshader_grid.cso"))
 			return false;
 
-		if (!m_PixelShaderOcean.Init(m_pDevice, shader_folder + L"PS_Ocean.cso"))
+		if (!m_PixelShaderOcean.Init(m_pDevice, shader_folder / L"PS_Ocean.cso"))
 			return false;
 
-		if (!m_ComputeShaderOcean.Init(m_pDevice, shader_folder + L"CS_PerlinNoise.cso"))
+		if (!m_ComputeShaderOcean.Init(m_pDevice, shader_folder / L"CS_PerlinNoise.cso"))
 			return false;
 
 		////////////////////
@@ -645,17 +597,17 @@ namespace DirectX11
 		// VERTEX SHADER //
 		///////////////////
 
-		if (!m_VertexShader.Init(m_pDevice, shader_folder + L"vertexshader.cso", layout3D, ARRAYSIZE(layout3D)))
+		if (!m_VertexShader.Init(m_pDevice, shader_folder / L"vertexshader.cso", layout3D, ARRAYSIZE(layout3D)))
 			return false;
 
 		//////////////////
 		// PIXEL SHADER //
 		//////////////////
 
-		if (!m_PixelShader.Init(m_pDevice, shader_folder + L"pixelshader.cso"))
+		if (!m_PixelShader.Init(m_pDevice, shader_folder / L"pixelshader.cso"))
 			return false;
 
-		if (!m_PixelShaderWithNoLight.Init(m_pDevice, shader_folder + L"pixelshader_nolighteffect.cso"))
+		if (!m_PixelShaderWithNoLight.Init(m_pDevice, shader_folder / L"pixelshader_nolighteffect.cso"))
 			return false;
 
 		return true;
@@ -663,8 +615,10 @@ namespace DirectX11
 
 	bool Graphics::InitScene()
 	{
+		HRESULT hr;
+
 		// Load texture(s).
-		HRESULT hr = DirectX::CreateWICTextureFromFile(
+		/*hr = DirectX::CreateWICTextureFromFile(
 			m_pDevice.Get(),
 			L"src/Data/Textures/Grass_Texture.png",
 			nullptr,
@@ -704,7 +658,7 @@ namespace DirectX11
 		hr = m_CB_CS_Perlin.Init(m_pDevice.Get(), m_pDeviceContext.Get());
 		COM_ERROR_IF_FAILED_RETURN(hr, L"Failed to initialize constant vertex buffer.", false);
 
-		/*hr = m_CB_PS_pixelshader.Init(m_pDevice.Get(), m_pDeviceContext.Get());
+		hr = m_CB_PS_pixelshader.Init(m_pDevice.Get(), m_pDeviceContext.Get());
 		COM_ERROR_IF_FAILED_RETURN(hr, L"Failed to initialize constant pixel buffer.", false);*/
 
 		hr = m_CB_PS_light.Init(m_pDevice.Get(), m_pDeviceContext.Get());
@@ -715,35 +669,35 @@ namespace DirectX11
 
 		// Load object(s).
 		//if (!m_GameObject.Init("src/Data/Objects/Samples/dodge_challenger.fbx", m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
-		if (!m_GameObject.Init("src/Data/Objects/nanosuit/nanosuit.obj", m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
-			return false;
+		/*if (!m_GameObject.Init("src/Data/Objects/nanosuit/nanosuit.obj", m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
+			return false;*/
 
-		if (!m_Light.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
-			return false;
+		//if (!m_Light.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
+			//return false;
 
-		if (!m_Axis.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader_2d))
+		/*if (!m_Axis.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader_2d))
 			return false;
 
 		if (!m_InfiniteGrid.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader_grid))
-			return false;
+			return false;*/
 
 		// Ocean
 
-		if (!m_Ocean.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_CS_Perlin, m_CB_VS_Ocean, 256, 256))
-			return false;
+		/*if (!m_Ocean.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_CS_Perlin, m_CB_VS_Ocean, 256, 256))
+			return false;*/
 
 		// Ocean
 
-		m_Axis.SetPosition(0.0f, 0.0f, 0.0f);
-		m_Axis.SetScale(5.0f, 5.0f, 5.0f);
+		/*m_Axis.SetPosition(0.0f, 0.0f, 0.0f);
+		m_Axis.SetScale(5.0f, 5.0f, 5.0f);*/
 
-		m_Light.SetPosition(10.0f, 5.0f, 0.0f);
-		m_Light.SetLookAtPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+		//m_Light.SetPosition(10.0f, 5.0f, 0.0f);
+		//m_Light.SetLookAtPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 		//m_InfiniteGrid.SetPosition(0.0f, 0.0f, 0.0f);
-		m_InfiniteGrid.SetScale(1.0f, 1.0f, 1.0f);
+		//m_InfiniteGrid.SetScale(1.0f, 1.0f, 1.0f);
 
-		m_Ocean.SetScale(5.0f, 5.0f, 5.0f);
+		//m_Ocean.SetScale(5.0f, 5.0f, 5.0f);
 		
 		// Load sprite(s);
 		/*if (!m_Sprite.Init(m_pDevice.Get(), m_pDeviceContext.Get(), 240, 304, "src/Data/Textures/Full Gimp SpriteSheet.png", m_CB_VS_vertexshader_2d)) // 240, 304
@@ -752,7 +706,7 @@ namespace DirectX11
 		m_Camera2D.SetProjectionValues(static_cast<float>(m_WindowWidth), static_cast<float>(m_WindowHeight), 0.0f, 1.0f);
 
 		//m_Camera.SetPosition(2.0f, 2.0f, 2.0f);
-		m_Camera.SetPosition(0.0f, 2.0f, 0.0f);
+		m_Camera.SetPosition(10.0f, 50.0f, 10.0f);
 		m_Camera.SetProjectionValues(90.0f, static_cast<float>(m_WindowWidth) / static_cast<float>(m_WindowHeight), 0.1f, 1000.0f);
 		m_Camera.SetLookAtPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 
@@ -768,7 +722,11 @@ namespace DirectX11
 		m_VertexShaderManager	= std::make_shared<Kaizen::Resources::VertexShaderManager>(m_pDevice);
 		m_PixelShaderManager	= std::make_shared<Kaizen::Resources::PixelShaderManager>(m_pDevice);
 
-		m_SpritesheetTextureID  = m_TextureManager->Load("src/Data/Textures/Full Gimp SpriteSheetV3.png");
+		/*if (IsDebuggerPresent())
+			m_SpritesheetTextureID  = m_TextureManager->Load("../../src/Data/Textures/Full Gimp SpriteSheetV3.png");
+		else*/
+			m_SpritesheetTextureID = m_TextureManager->Load((GetExecutableDir() / "Full Gimp SpriteSheetV3.png").string());
+
 		m_VertexShaderSprite	= m_VertexShaderManager->Load<VertexPosUV>(m_pDevice, "VS_StaticSpriteShader.cso");
 		m_PixelShaderSprite		= m_PixelShaderManager->Load(m_pDevice, "PS_StaticSpriteShader.cso");
 
@@ -781,6 +739,7 @@ namespace DirectX11
 		m_Coordinator.RegisterComponent<WherePenguinsDwell::Tags::WindowColliderTag>();
 		m_Coordinator.RegisterComponent<WherePenguinsDwell::Components::MovementComponent>();
 		m_Coordinator.RegisterComponent<WherePenguinsDwell::Components::VelocityComponent>();
+		m_Coordinator.RegisterComponent<WherePenguinsDwell::Components::TimerComponent>();
 
 		m_RenderSystem = m_Coordinator.RegisterSystem<Kaizen::Graphics::RenderSystem>();
 		{
@@ -805,8 +764,16 @@ namespace DirectX11
 			m_Coordinator.SetSystemSignature<Kaizen::Graphics::AnimationSystem>(signature);
 		}
 
-		std::default_random_engine generator;
-		std::uniform_real_distribution<float> randPosition(100.0f, 500.0f);
+		//std::default_random_engine generator;
+		//std::uniform_real_distribution<float> randPosition(100.0f, 500.0f);
+		RECT rect{};
+		HWND taskbar_handle = FindWindowA("Shell_TrayWnd", NULL);
+		GetWindowRect(taskbar_handle, &rect);
+		assert(!(rect.left == 0 && rect.right == 0 && rect.top == 0 && rect.bottom == 0) && "Couldn't find taskbar dimensions.");
+
+		std::mt19937 generator(std::random_device{}());
+		std::uniform_real_distribution<float> dist_x(rect.left + 15, rect.right - 15);
+		//std::uniform_real_distribution<float> dist_y(rect.top, rect.bottom);
 
 		m_UniformGrid = std::make_shared<Kaizen::Container::UniformGrid<WherePenguinsDwell::Components::ColliderBox>>(m_WindowWidth, m_WindowHeight, 39);
 		m_CollisionSystem = m_Coordinator.RegisterSystem<WherePenguinsDwell::CollisionSystem>();
@@ -816,7 +783,7 @@ namespace DirectX11
 			signature.set(m_Coordinator.GetComponentType<WherePenguinsDwell::Components::ColliderBox>());
 			m_Coordinator.SetSystemSignature<WherePenguinsDwell::CollisionSystem>(signature);
 		}
-		m_CollisionSystem->Init(m_UniformGrid.get(), 10.f, 200);
+		m_CollisionSystem->Init(m_UniformGrid.get(), 10.f);
 
 		m_WindowSystem = m_Coordinator.RegisterSystem<WherePenguinsDwell::Systems::WindowSystem>();
 		{
@@ -836,28 +803,47 @@ namespace DirectX11
 			m_Coordinator.SetSystemSignature<WherePenguinsDwell::MovementSystem>(signature);
 		}
 
-		std::vector<Entity> entities(5);
+		m_BehaviourSystem = m_Coordinator.RegisterSystem<WherePenguinsDwell::BehaviourSystem>();
+		{
+			Signature signature;
+			signature.set(m_Coordinator.GetComponentType<AnimationComponent>());
+			m_Coordinator.SetSystemSignature<WherePenguinsDwell::MovementSystem>(signature);
+		}
+		m_BehaviourSystem->Init(200);
+
+		m_LifeCycleSystem = m_Coordinator.RegisterSystem<WherePenguinsDwell::LifeCycleSystem>();
+		{
+			Signature signature;
+			signature.set(m_Coordinator.GetComponentType<AnimationComponent>());
+			signature.set(m_Coordinator.GetComponentType<WherePenguinsDwell::Components::TimerComponent>());
+			m_Coordinator.SetSystemSignature<WherePenguinsDwell::MovementSystem>(signature);
+		}
+
+		std::vector<Entity> entities(100);
 		for (auto& entity : entities)
 		{
 			entity = m_Coordinator.CreateEntity();
 
+			Kaizen::Graphics::SpriteComponent spriteData;
+			m_Coordinator.AddComponent(entity, spriteData);
+
 			Kaizen::Components::TransformComponent transform_comp;
-			transform_comp.Position = { randPosition(generator), randPosition(generator), 0.0f };
+			transform_comp.SetPosition(dist_x(generator), static_cast<float>(rect.top + 15), 0.0f);
 			m_Coordinator.AddComponent(
 				entity,
 				transform_comp
 			);
 
-			Kaizen::Graphics::SpriteComponent spriteData;
+			/*Kaizen::Graphics::SpriteComponent spriteData;
 			// Animation takes care of this!
 			/*spriteData.w = 240.0f;
 			spriteData.h = 270.0f;
 			spriteData.cols = 8;
 			spriteData.rows = 9;
 			spriteData.uw = 1.0f / 8.0f;
-			spriteData.vh = 1.0f / 9.0f;*/
+			spriteData.vh = 1.0f / 9.0f;
 
-			m_Coordinator.AddComponent(entity, spriteData);
+			m_Coordinator.AddComponent(entity, spriteData);*/
 
 			AnimationComponent anim;
 			anim.SetupFromConfig(448.f, 584.f, {
@@ -886,17 +872,6 @@ namespace DirectX11
 				{ {32.f, 32.f}, 12, 12.f, 1.f, 1.f}, // splash: 32x32, 12 kolommen, 12 fps
 				{ {30.f, 30.f}, 1, 1.f, 0.f, 0.f}, // exploding: 30x30, 1 kolommen, 1 fps
 			});
-			/*anim.AddState(EntityState::idle, 8.0f);
-			anim.AddState(EntityState::walkingRight, 8.0f);
-			anim.AddState(EntityState::walkingLeft, 8.0f);
-			anim.AddState(EntityState::falling, 8.0f);
-			anim.AddState(EntityState::tumbling, 8.0f);
-			anim.AddState(EntityState::floating, 8.0f);
-			anim.AddState(EntityState::falling, 8.0f);
-			anim.AddState(EntityState::climbingOnTheRight, 8.0f);
-			anim.AddState(EntityState::climbingOnTheLeft, 8.0f);
-			anim.AddState(EntityState::exploding, 100.0f);
-			anim.CurrentState = EntityState::tumbling;*/
 			m_Coordinator.AddComponent(entity, anim);
 
 			WherePenguinsDwell::Components::ColliderBox collider;
@@ -912,6 +887,9 @@ namespace DirectX11
 
 			WherePenguinsDwell::Components::VelocityComponent vel;
 			m_Coordinator.AddComponent(entity, vel);
+
+			WherePenguinsDwell::Components::TimerComponent tim;
+			m_Coordinator.AddComponent(entity, tim);
 
 			auto sharedSpriteMaterial = std::make_shared<Kaizen::Graphics::SpriteMaterial>(m_pDevice.Get(), m_pDeviceContext.Get(), m_VertexShaderManager->GetTexture(m_VertexShaderSprite), m_PixelShaderManager->GetTexture(m_PixelShaderSprite), m_SpritesheetTextureID);
 			m_Coordinator.AddComponent(
@@ -944,7 +922,7 @@ namespace DirectX11
 		// Even though the window is transparent, Dear ImGui can still receive mouse inputs, when the window is focused.
 		// Once the (main) window is out of focus, if at all, Dear ImGui will stop receiving mouse inputs.
 		// Can't solve this in the message loop since it requires focus...
-		// So we bypass the message loop...
+		// So we bypass the message loop.
 		ImGuiIO& io = ImGui::GetIO();
 		io.MousePos = ImVec2(static_cast<float>(p.x), static_cast<float>(p.y));
 

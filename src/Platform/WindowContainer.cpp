@@ -48,7 +48,7 @@ namespace windows
 
 		switch (uMsg)
 		{
-
+		
 			///////////////////////
 			// Keyboard messages //
 			///////////////////////
@@ -167,6 +167,55 @@ namespace windows
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
 		}
 
+			////////////////////
+			// Close messages //
+			////////////////////
+
+		case WM_TRAYICON:
+		{
+			if (lParam != WM_RBUTTONUP)
+				return 0;
+			
+			POINT pt;
+			GetCursorPos(&pt); // Haal muispositie op
+
+			HMENU hMenu = CreatePopupMenu();
+			InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, ID_TRAY_EXIT, TEXT("Close"));
+
+			// Win32 Hack: Zorgt ervoor dat het menu sluit als je ernaast klikt
+			SetForegroundWindow(hWnd);
+
+			// Toon het menu op de muispositie
+			TrackPopupMenu(hMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
+
+			DestroyMenu(hMenu);
+			return 0;
+		}
+		case WM_COMMAND:
+		{
+			if (LOWORD(wParam) != ID_TRAY_EXIT)
+				return DefWindowProc(hWnd, uMsg, wParam, lParam);
+
+			[[fallthrough]];
+		}
+		case WM_CLOSE:
+		{
+			// Note: Same logic holds for WM_COMMAND.
+			// 
+			// TODO: Mhmmm... If the window is transparant the only way for the user to close the window is to either:
+			//     - use task manager.
+			//     - using the tray icon.
+			// In case of task manager WM_CLOSE will never be sent since it uses the TerminateProcess function through the OS.
+			// How do we fix this?
+			// 
+			// TODO: Problem we have here is that this will call the same OnShutdown function
+			// for every window. Since for efficiency and ease every window uses the same window procedure.
+			// But if we use 2 windows with 2 totally different applications but in the same process
+			// they will use totally different, if at all, OnShutdown functions.
+			this->OnShutdown();
+			DestroyWindow(hWnd);
+			return 0;
+		}
 		default:
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
 		}

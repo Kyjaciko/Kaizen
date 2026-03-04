@@ -47,12 +47,13 @@ namespace WherePenguinsDwell::Systems
             m_UpdatePeriod = 1.f / static_cast<float>(fps);
 
             m_EdgeThickness = edgeThickness;
-            m_ScreenWidth = static_cast<float>(GetSystemMetrics(SM_CXSCREEN));
+			m_ScreenWidth = static_cast<float>(GetSystemMetrics(SM_CXSCREEN)); // TODO: graphics should pass this, unnecessary call to windows API.
             m_ScreenHeight = static_cast<float>(GetSystemMetrics(SM_CYSCREEN));
         }
 
         void Update(Kaizen::Logic::Coordinator& coordinator, const float dt)
         {
+			// Since windows API calls are expensive, we only update the window entities a few times per second.
             m_Timer += dt;
             if (m_Timer < m_UpdatePeriod)
                 return;
@@ -63,10 +64,10 @@ namespace WherePenguinsDwell::Systems
             // So 'Full rebuild' is a good enough choice.
             // 
             // TODO: Avoid destroying entities while iterating over a system container.
-            // 'DestroyEntity()' mutates system entity sets, which internally invalidates the iterators.
-            // Fix this garbage code >:[, possible solution:
-            //      -> Mark entities for destruction (deferred destroy queue).
-            //      -> Process the destroy queue after system updates.
+            // 'DestroyEntity()' mutates the system entity set, which invalidates their iterators.
+            // Fix this code >:[, possible solution:
+            //      -> Mark entities for destruction in a queue.
+            //      -> Process the queue.
             std::vector<Entity> entitiesToDestroy(m_Entities.begin(), m_Entities.end());
             for (auto entity : entitiesToDestroy)
                 coordinator.DestroyEntity(entity);
@@ -78,7 +79,7 @@ namespace WherePenguinsDwell::Systems
             EnumWindows(Platform::Windows::EnumWindowsProc, reinterpret_cast<LPARAM>(&windows));
             for (const auto& rect : windows)
             {
-                // CAREFULL! Since the main window is used, the coordinate system is the same.
+                // CAREFULL! Since the main monitor is used, the coordinate system (origin point) is the same.
                 // Otherwise an offset or transform must be used.
                 CreateWindowEntity(
                     coordinator,

@@ -55,6 +55,9 @@ namespace windows
 			exStyle |= WS_EX_NOREDIRECTIONBITMAP; // Tested -> Not necessary.
 			exStyle |= WS_EX_NOACTIVATE;
 
+			// Force window always on top, even over the taskbar.
+			exStyle |= WS_EX_TOPMOST;
+
 			// Don't show window in ALT+TAB.
 			exStyle &= ~WS_EX_APPWINDOW;
 			exStyle |= WS_EX_TOOLWINDOW;
@@ -97,18 +100,19 @@ namespace windows
 		// Bring the window up on the screen and set it as the main focus.
 		ShowWindow(m_hWnd, SW_SHOW);
 		SetForegroundWindow(m_hWnd);
-		SetFocus(m_hWnd);
+		if (!transparent)
+			SetFocus(m_hWnd);
 
 		if (transparent)
 		{
 			NOTIFYICONDATA nid = {};
 			nid.cbSize = sizeof(NOTIFYICONDATA);
-			nid.hWnd = m_hWnd;                     // Window die berichten ontvangt
-			nid.uID = 1;                         // Unieke ID
+			nid.hWnd = m_hWnd;
+			nid.uID = TRAY_ICON_ID;
 			nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-			nid.uCallbackMessage = WM_APP + 1;   // Custom message
-			nid.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(101));
-			wcscpy_s(nid.szTip, L"My applicatie");
+			nid.uCallbackMessage = WM_TRAYICON;
+			nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+			wcscpy_s(nid.szTip, L"My app");
 
 			Shell_NotifyIcon(NIM_ADD, &nid);
 		}
@@ -130,7 +134,7 @@ namespace windows
 
 		if (msg.message == WM_NULL && !IsWindow(m_hWnd))
 		{
-			m_hWnd = nullptr; // Message processing loop takes care of destroying the window.
+			m_hWnd = nullptr; // Message loop takes care of destroying the window.
 			UnregisterClass(m_wideClassName.c_str(), m_hInstance);
 			return false;
 		}
@@ -147,9 +151,9 @@ namespace windows
 	{
 		switch (uMsg)
 		{
-		case WM_CLOSE:
+		/*case WM_CLOSE:
 			DestroyWindow(hWnd);
-			return 0;
+			return 0;*/
 		default:
 		{
 			WindowContainer* const p_window = reinterpret_cast<WindowContainer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));

@@ -26,6 +26,8 @@ namespace windows
 		WindowContainer();
 		~WindowContainer();
 
+		virtual void OnShutdown() const noexcept {}
+
 		LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:

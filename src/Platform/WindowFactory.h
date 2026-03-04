@@ -22,6 +22,12 @@
 #include "../WindowsHelpers.h"
 #include "Debug/ErrorLogger.h"
 
+#include <shellapi.h>
+
+inline constexpr UINT WM_TRAYICON = WM_USER + 1;
+inline constexpr UINT ID_TRAY_EXIT = 1001;
+inline constexpr UINT TRAY_ICON_ID = 1;
+
 //////////////////////////
 // FORWARD DECLARATIONS //
 //////////////////////////
