@@ -37,23 +37,27 @@
 
 //
 #include <random>
-#include "../Settings.h"
-#include "../ResourceManager.h"
-#include "../MeshResource.h"
-#include "../Coordinator.h"
-#include "../RenderSystem.h"
-#include "../Material.h"
-#include "../PrimitiveFactory.h"
+#include "../Core/Settings.h"
+#include "ResourceManager.h"
+#include "MeshResource.h"
+#include "../Systems/ECS/Coordinator.h"
+#include "RenderSystem.h"
+#include "Material.h"
+#include "PrimitiveFactory.h"
 #include "../Containers/UniformGrid.h"
-#include "../Components.h"
-#include "../CollisionSystem.h"
-#include "../WindowSystem.h"
-#include "../MovementSystem.h"
-#include "../WindowsTypes.h"
-#include "../WindowsHelpers.h"
+
+#include "../Platform/Core/WindowsTypes.h"
+#include "../Platform/Core/WindowsHelpers.h"
+
+// Where Penguins Dwell //
+
+#include "../Demos/Where Penguins Dwell/Systems/Components.h"
+#include "../Demos/Where Penguins Dwell/Systems/CollisionSystem.h"
+#include "../Demos/Where Penguins Dwell/Platform/WindowSystem.h"
+#include "../Demos/Where Penguins Dwell/Systems/MovementSystem.h"
 #include "../Demos/Where Penguins Dwell/Core/Settings.h"
-#include "../BehaviourSystem.h"
-#include "../LifeCycleSystem.h"
+#include "../Demos/Where Penguins Dwell/Systems/BehaviourSystem.h"
+#include "../Demos/Where Penguins Dwell/Systems/LifeCycleSystem.h"
 
 //////////////
 // SETTINGS //

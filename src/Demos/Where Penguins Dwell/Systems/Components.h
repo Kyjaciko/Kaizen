@@ -9,7 +9,7 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "EntityManager.h"
+#include "../../../Systems/ECS/EntityManager.h"
 
 ////////////////
 // COMPONENTS //

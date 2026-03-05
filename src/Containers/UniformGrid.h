@@ -17,9 +17,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "Constants.h"
-#include "../MortonCode2D.h"
-#include "../BasicStructures.h"
+#include "BasicStructures.h"
+#include "../Core/Constants.h"
+#include "Helpers/MortonCode2D.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: UniformGrid

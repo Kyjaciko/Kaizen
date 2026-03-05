@@ -17,11 +17,11 @@
 ///////////////////////
 
 #include "Demos/Where Penguins Dwell/Core/Constants.h"
-#include "System.h"
-#include "Coordinator.h"
+#include "../../../Systems/ECS/System.h"
+#include "../../../Systems/ECS/Coordinator.h"
 #include "WindowEnumerator.h"
 #include "TransformComponent.h"
-#include "Components.h"
+#include "../Systems/Components.h"
 
 //////////
 // TAGS //

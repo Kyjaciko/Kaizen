@@ -12,12 +12,12 @@
 #include <concepts>
 #include <optional>
 
-#include "src/Demos/Where Penguins Dwell/Core/Constants.h"
+#include "../Core/Constants.h"
 #include "Components.h"
-#include "Coordinator.h"
+#include "../../../Systems/ECS/Coordinator.h"
 #include "TransformComponent.h"
 #include "Containers/UniformGrid.h"
-#include "WindowSystem.h"
+#include "../Platform/WindowSystem.h"
 
 namespace WherePenguinsDwell
 {

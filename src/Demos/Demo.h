@@ -2,4 +2,10 @@
 // Filename: Demo.h
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef _DEMO_H_
+#define _DEMO_H_
+
 #include "Ocean/Ocean.h"
+#include "Where Penguins Dwell/Core/WherePenguinsDwell.h"
+
+#endif // !_DEMO_H_

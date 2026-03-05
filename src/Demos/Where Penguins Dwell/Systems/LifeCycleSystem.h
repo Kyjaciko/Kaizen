@@ -8,10 +8,10 @@
 #include <vector>
 #include <ranges>
 
-#include "Coordinator.h"
+#include "../../../Systems/ECS/Coordinator.h"
 #include "Components.h"
-#include "src/Demos/Where Penguins Dwell/Core/Constants.h"
-#include "WindowSystem.h"
+#include "../Core/Constants.h"
+#include "../Platform/WindowSystem.h"
 #include "AnimationComponent.h"
 
 namespace WherePenguinsDwell

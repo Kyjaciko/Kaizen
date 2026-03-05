@@ -15,8 +15,8 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "Types.h"
-#include "graphics/Shaders.h"
+#include "../Core/Types.h"
+#include "Graphics/Shaders.h"
 #include "MeshResource.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/ConstantBufferTypes.h"

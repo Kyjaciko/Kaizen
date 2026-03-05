@@ -19,10 +19,10 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "Constants.h"
-#include "Types.h"
+#include "../Core/Types.h"
+#include "../Core/Constants.h"
 
-
+// TODO: REMOVE
 #include <filesystem>
 static std::filesystem::path GetExecutableDir2()
 {

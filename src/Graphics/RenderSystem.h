@@ -9,18 +9,19 @@
 // INCLUDES //
 //////////////
 
+#include <memory>
 #include <cassert>
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "System.h"
-#include "IComponent.h"
-#include "Coordinator.h"
+#include "Material.h"
+#include "../Systems/ECS/System.h"
+#include "../Systems/ECS/Coordinator.h"
 #include "Graphics/ConstantBufferTypes.h"
-#include "AnimationComponent.h"
-#include "Components.h"
+#include "../Demos/Where Penguins Dwell/Systems/AnimationComponent.h"
+#include "../Demos/Where Penguins Dwell/Systems/Components.h"
 #include "TransformComponent.h"
 
 ////////////////////////////////////////////////////////////////////////////////

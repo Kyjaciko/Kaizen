@@ -9,9 +9,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "../WindowsTypes.h"
-#include "../Platform/WindowContainer.h"
 #include "../Platform/Timer/HPTimer.h"
+#include "../Platform/WindowContainer.h"
+#include "../Platform/Core/WindowsTypes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Engine

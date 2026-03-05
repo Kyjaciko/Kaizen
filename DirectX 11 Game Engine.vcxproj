@@ -155,7 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MeshResource.cpp" />
+    <ClCompile Include="src\Graphics\MeshResource.cpp" />
     <ClCompile Include="src\Demos\Ocean\Projector.cpp" />
     <ClCompile Include="src\Graphics\InfiniteGrid.cpp" />
     <ClCompile Include="src\Demos\Ocean\Ocean.cpp" />
@@ -189,34 +189,35 @@
     <ClCompile Include="src\Platform\Input\MouseEvent.cpp" />
     <ClCompile Include="src\Platform\WindowContainer.cpp" />
     <ClCompile Include="src\Platform\WindowFactory.cpp" />
-    <ClCompile Include="WindowEnumerator.cpp" />
+    <ClCompile Include="src\Demos\Where Penguins Dwell\Platform\WindowEnumerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\NOTE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimationComponent.h" />
-    <ClInclude Include="BasicStructures.h" />
-    <ClInclude Include="BehaviourSystem.h" />
-    <ClInclude Include="Components.h" />
-    <ClInclude Include="CollisionSystem.h" />
-    <ClInclude Include="ComponentArray.h" />
-    <ClInclude Include="ComponentManager.h" />
-    <ClInclude Include="LifeCycleSystem.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\AnimationComponent.h" />
+    <ClInclude Include="src\Containers\BasicStructures.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Core\WherePenguinsDwell.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\BehaviourSystem.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\Components.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\CollisionSystem.h" />
+    <ClInclude Include="src\Systems\ECS\ComponentArray.h" />
+    <ClInclude Include="src\Systems\ECS\ComponentManager.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\LifeCycleSystem.h" />
     <ClInclude Include="src\Demos\Where Penguins Dwell\Core\Constants.h" />
-    <ClInclude Include="Coordinator.h" />
-    <ClInclude Include="EntityManager.h" />
-    <ClInclude Include="IComponentArray.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="MeshResource.h" />
-    <ClInclude Include="GeometryGenerator.h" />
-    <ClInclude Include="MortonCode2D.h" />
-    <ClInclude Include="MortonCode3D.h" />
-    <ClInclude Include="MovementSystem.h" />
-    <ClInclude Include="PrimitiveFactory.h" />
-    <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Settings.h" />
+    <ClInclude Include="src\Systems\ECS\Coordinator.h" />
+    <ClInclude Include="src\Systems\ECS\EntityManager.h" />
+    <ClInclude Include="src\Systems\ECS\IComponentArray.h" />
+    <ClInclude Include="src\Graphics\Material.h" />
+    <ClInclude Include="src\Graphics\MeshResource.h" />
+    <ClInclude Include="src\Graphics\GeometryGenerator.h" />
+    <ClInclude Include="src\Containers\Helpers\MortonCode2D.h" />
+    <ClInclude Include="src\Containers\Helpers\MortonCode3D.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\MovementSystem.h" />
+    <ClInclude Include="src\Graphics\PrimitiveFactory.h" />
+    <ClInclude Include="src\Graphics\RenderSystem.h" />
+    <ClInclude Include="src\Graphics\ResourceManager.h" />
+    <ClInclude Include="src\Core\Settings.h" />
     <ClInclude Include="src\Demos\Ocean\Projector.h" />
     <ClInclude Include="src\Demos\Demo.h" />
     <ClInclude Include="src\Demos\Ocean\Ocean.h" />
@@ -233,10 +234,7 @@
     <ClInclude Include="src\Graphics\Model.h" />
     <ClInclude Include="src\Graphics\RenderableGameObject.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
-    <ClInclude Include="src\IComponent.h" />
-    <ClInclude Include="src\RenderTypes.h" />
-    <ClInclude Include="src\StaticSpriteComponent.h" />
-    <ClInclude Include="src\StringHelper.h" />
+    <ClInclude Include="src\Core\StringHelper.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Platform\Debug\COMException.h" />
     <ClInclude Include="src\Platform\Debug\ErrorLogger.h" />
@@ -265,16 +263,16 @@
     <ClInclude Include="src\Platform\Timer\HPTimer.h" />
     <ClInclude Include="src\Platform\WindowContainer.h" />
     <ClInclude Include="src\Platform\WindowFactory.h" />
-    <ClInclude Include="src\Constants.h" />
-    <ClInclude Include="src\Types.h" />
-    <ClInclude Include="System.h" />
-    <ClInclude Include="SystemManager.h" />
-    <ClInclude Include="TransformComponent.h" />
+    <ClInclude Include="src\Core\Constants.h" />
+    <ClInclude Include="src\Core\Types.h" />
+    <ClInclude Include="src\Systems\ECS\System.h" />
+    <ClInclude Include="src\Systems\ECS\SystemManager.h" />
+    <ClInclude Include="src\Graphics\TransformComponent.h" />
     <ClInclude Include="src\Containers\UniformGrid.h" />
-    <ClInclude Include="WindowsHelpers.h" />
-    <ClInclude Include="WindowsTypes.h" />
-    <ClInclude Include="WindowEnumerator.h" />
-    <ClInclude Include="WindowSystem.h" />
+    <ClInclude Include="src\Platform\Core\WindowsHelpers.h" />
+    <ClInclude Include="src\Platform\Core\WindowsTypes.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Platform\WindowEnumerator.h" />
+    <ClInclude Include="src\Demos\Where Penguins Dwell\Platform\WindowSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Demos\Ocean\CS_PerlinNoise.hlsl">
@@ -397,12 +395,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="src\Data\Fonts\Comic_Sans_MS_16.spritefont">
-      <FileType>Document</FileType>
-    </Image>
-    <Image Include="src\Data\Textures\Full Gimp SpriteSheetV3.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

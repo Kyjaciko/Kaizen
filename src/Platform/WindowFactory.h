@@ -9,20 +9,19 @@
 // INCLUDES //
 //////////////
 
-#include <Windows.h>
 #include <string>
 #include <memory>
+#include <Windows.h>
+#include <shellapi.h>
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "../Settings.h"
-#include "../WindowsTypes.h"
-#include "../WindowsHelpers.h"
+#include "../Core/Settings.h"
 #include "Debug/ErrorLogger.h"
-
-#include <shellapi.h>
+#include "Core/WindowsTypes.h"
+#include "Core/WindowsHelpers.h"
 
 inline constexpr UINT WM_TRAYICON = WM_USER + 1;
 inline constexpr UINT ID_TRAY_EXIT = 1001;

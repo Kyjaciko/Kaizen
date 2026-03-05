@@ -9,9 +9,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "System.h"
+#include "../../../Systems/ECS/System.h"
 #include "Components.h"
-#include "Coordinator.h"
+#include "../../../Systems/ECS/Coordinator.h"
 #include "TransformComponent.h"
 #include "AnimationComponent.h"
 

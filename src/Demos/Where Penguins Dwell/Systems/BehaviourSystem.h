@@ -13,17 +13,17 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 
-#include "src/Demos/Where Penguins Dwell/Core/Constants.h"
-#include "Coordinator.h"
+#include "../Core/Constants.h"
+#include "../../../Systems/ECS/Coordinator.h"
 #include "Components.h"
 #include "CollisionSystem.h"
-#include "WindowSystem.h"
+#include "../Platform/WindowSystem.h"
 #include "AnimationComponent.h"
 
 namespace WherePenguinsDwell
 {
     /**
-     * @brief BehaviourSystem manages penguin AI and state transitions.
+     * @brief BehaviourSystem manages penguin AI.
      */
     class BehaviourSystem : public Kaizen::Logic::System
     {
@@ -39,9 +39,7 @@ namespace WherePenguinsDwell
     public:
         void Init(const int gameFPS) noexcept
         {
-            m_ActivityDist = std::uniform_int_distribution<>(1, Constants::Systems::ACTIVITY_CHANGE_MULTIPLIER *
-                60 * // seconds per minute
-                gameFPS);
+            m_ActivityDist = std::uniform_int_distribution<>(1, Constants::Systems::ACTIVITY_CHANGE_MULTIPLIER * 60 /* seconds per minute */ * gameFPS);
             m_StateDist = std::uniform_int_distribution<>(0, Constants::Systems::MAX_IDLE_STATE - 1);
         }
 
