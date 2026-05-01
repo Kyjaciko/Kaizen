@@ -67,9 +67,6 @@
     <Filter Include="Header Files\Demos\Where Penguins Dwell\Platform">
       <UniqueIdentifier>{008025e8-e33d-4baf-ac1e-625fcefeaebc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Containers\Helpers">
-      <UniqueIdentifier>{58263cf9-f568-42b7-ad85-e0c88610d38f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{49e872bf-bc0e-457e-ab73-ad49c8c9f0f7}</UniqueIdentifier>
     </Filter>
@@ -84,6 +81,9 @@
     </Filter>
     <Filter Include="Header Files\Systems\ECS">
       <UniqueIdentifier>{759b9f52-4b9f-4d98-a856-78da0876793a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{49d1a74f-20c8-4d2d-b5fb-931c2ae09213}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +196,9 @@
   <ItemGroup>
     <Text Include="src\NOTE.txt">
       <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="Text.txt">
+      <Filter>Header Files\Demos\Where Penguins Dwell\Systems</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -346,12 +349,6 @@
     <ClInclude Include="src\Containers\BasicStructures.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="src\Containers\Helpers\MortonCode3D.h">
-      <Filter>Header Files\Containers\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Containers\Helpers\MortonCode2D.h">
-      <Filter>Header Files\Containers\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Settings.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -432,6 +429,9 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\PrimitiveFactory.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Containers\Helpers\morton_code.h">
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

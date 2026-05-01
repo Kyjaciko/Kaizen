@@ -84,9 +84,9 @@ namespace Kaizen::Container
         {
             std::sort(m_Entries.begin(), m_Entries.end());
 
-            for (ptrdiff_t i = 0; i < std::ssize(m_Entries); ++i)
+            for (std::ptrdiff_t i = 0; i < std::ssize(m_Entries); ++i)
             {
-                const ptrdiff_t cellIdx = static_cast<ptrdiff_t>(m_Entries[i].cellIndex);
+                const std::ptrdiff_t cellIdx = static_cast<std::ptrdiff_t>(m_Entries[i].cellIndex);
                 if (cellIdx >= std::ssize(m_CellStart) || m_CellStart[cellIdx] != Constant::Container::INDEX_UNINITIALIZED)
                     continue;
 
@@ -116,7 +116,7 @@ namespace Kaizen::Container
                         continue;
 
                     // Loop through the entries of this cell.
-                    for (ptrdiff_t i = start; i < std::ssize(m_Entries); ++i)
+                    for (std::ptrdiff_t i = start; i < std::ssize(m_Entries); ++i)
                     {
                         if (m_Entries[i].cellIndex != cellIdx) 
                             break;
@@ -137,21 +137,21 @@ namespace Kaizen::Container
         void CheckCollisions(const std::function<void(T*, T*)>& onCollision) const
         {
             // Loop over each cell.
-            for (ptrdiff_t index = 0; index < std::ssize(m_CellStart); ++index)
+            for (std::ptrdiff_t index = 0; index < std::ssize(m_CellStart); ++index)
             {
                 const uint32_t start = m_CellStart[index];
                 if (start == Constant::Container::INDEX_UNINITIALIZED)
                     continue;
 
                 // Search for the end of the cell in Array L.
-                ptrdiff_t end = static_cast<ptrdiff_t>(start);
-                while (end < std::ssize(m_Entries) && static_cast<ptrdiff_t>(m_Entries[end].cellIndex) == index)
+                std::ptrdiff_t end = static_cast<std::ptrdiff_t>(start);
+                while (end < std::ssize(m_Entries) && static_cast<std::ptrdiff_t>(m_Entries[end].cellIndex) == index)
                     ++end;
 
                 // Couple each object with every other object in the cell.
-                for (ptrdiff_t i = start; i < end; ++i)
+                for (std::ptrdiff_t i = start; i < end; ++i)
                 {
-                    for (ptrdiff_t j = i + 1; j < end; ++j)
+                    for (std::ptrdiff_t j = i + 1; j < end; ++j)
                     {
                         onCollision(m_Entries[i].object, m_Entries[j].object);
                     }

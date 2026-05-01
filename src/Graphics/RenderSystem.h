@@ -137,7 +137,9 @@ namespace Kaizen::Graphics
                 if (!transform.IsDirty)
                     continue;
 
-                transform.WorldMatrix = DirectX::XMMatrixScaling(transform.Scale.x, transform.Scale.y, transform.Scale.z) * DirectX::XMMatrixRotationRollPitchYaw(transform.Rotation.x, transform.Rotation.y, transform.Rotation.z) * DirectX::XMMatrixTranslation(transform.Position.x, transform.Position.y, transform.Position.z);
+                transform.WorldMatrix = DirectX::XMMatrixScaling(transform.Scale.x, transform.Scale.y, transform.Scale.z) 
+                    * DirectX::XMMatrixRotationRollPitchYaw(transform.Rotation.x, transform.Rotation.y, transform.Rotation.z) 
+                    * DirectX::XMMatrixTranslation(transform.Position.x, transform.Position.y, transform.Position.z);
                 transform.IsDirty = false;
             }
         }

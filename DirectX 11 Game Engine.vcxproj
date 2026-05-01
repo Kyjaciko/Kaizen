@@ -193,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\NOTE.txt" />
+    <Text Include="Text.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\AnimationComponent.h" />
@@ -211,8 +212,7 @@
     <ClInclude Include="src\Graphics\Material.h" />
     <ClInclude Include="src\Graphics\MeshResource.h" />
     <ClInclude Include="src\Graphics\GeometryGenerator.h" />
-    <ClInclude Include="src\Containers\Helpers\MortonCode2D.h" />
-    <ClInclude Include="src\Containers\Helpers\MortonCode3D.h" />
+    <ClInclude Include="src\Containers\Helpers\morton_code.h" />
     <ClInclude Include="src\Demos\Where Penguins Dwell\Systems\MovementSystem.h" />
     <ClInclude Include="src\Graphics\PrimitiveFactory.h" />
     <ClInclude Include="src\Graphics\RenderSystem.h" />

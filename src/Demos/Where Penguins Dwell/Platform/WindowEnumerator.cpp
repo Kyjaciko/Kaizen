@@ -67,7 +67,7 @@ namespace WherePenguinsDwell::Platform::Windows
         if (!IntersectRect(&intersection, &rect, &screenRect))
             return TRUE;
 
-        // NEVER throw a C++ exception back into a C API (especially windows API)!
+        // NEVER throw a C++ exception back into a C API (especially windows API T_T )!
         try
         {
             windows->push_back(rect);

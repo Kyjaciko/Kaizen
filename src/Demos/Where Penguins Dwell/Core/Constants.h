@@ -29,8 +29,7 @@ namespace WherePenguinsDwell::Constants
         // Behaviour System //
         //////////////////////
 
-       // inline constexpr int ACTIVITY_CHANGE_DENOMINATOR = 30; // Seconds.
-        inline constexpr int ACTIVITY_CHANGE_MULTIPLIER = 5; // 1/.. per time window.
+        inline constexpr int ACTIVITY_CHANGE_MULTIPLIER = 5; // 1/.. (in this case: 1/5 -> 20%) per time window.
 
         inline constexpr int READING_PROBABILITY = 0;
         inline constexpr int DIGGING_PROBABILITY = 1;

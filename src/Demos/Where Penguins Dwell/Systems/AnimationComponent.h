@@ -36,7 +36,7 @@ struct AnimRowConfig
     int Columns;
     float FPS = 8.0f;
 
-	// Required if collisionBox size differs from frame size.
+	// Required if ColliderBox size differs from frame size.
     float OffsetX = 0.0f;
     float OffsetY = 0.0f;
 };

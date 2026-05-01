@@ -51,6 +51,9 @@ namespace WherePenguinsDwell
             const std::vector<CollisionSystem::CollisionEvent>& collisionEvents,
             const std::vector<Entity>& entitiesWithoutContact)
         {
+            // 1. Proactieve checks: Lopen ze richting een rand?
+            //AnticipateLedges(coordinator, grid);
+
             // Handle collision-based state changes
             ProcessCollisionStates(coordinator, collisionEvents);
 
