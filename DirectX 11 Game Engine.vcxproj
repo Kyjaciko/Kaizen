@@ -190,9 +190,6 @@
     <ClCompile Include="src\Platform\WindowFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\NOTE.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\Demos\Ocean\Projector.h" />
     <ClInclude Include="src\Demos\Demo.h" />
     <ClInclude Include="src\Demos\Ocean\Ocean.h" />

@@ -21,8 +21,8 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
+#x64/
+#x86/
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
@@ -74,7 +74,7 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
+#*.obj
 *.iobj
 *.pch
 *.pdb
@@ -400,3 +400,15 @@ FodyWeavers.xsd
 # Keep Debug folder under src/Platform
 !src/Platform/Debug/
 !src/Platform/Debug/**
+
+# Keep assimp-vc143-mt.dll in x64/Debug or x64/Release
+x64/Debug/*
+!x64/Debug/
+!x64/Debug/assimp-vc143-mt.dll
+
+x64/Release/*
+!x64/Release/
+!x64/Release/assimp-vc143-mt.dll
+
+# Keep DirectXTK Lib files
+!src/DirectXTK/Lib/**

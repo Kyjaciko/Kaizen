@@ -45,15 +45,16 @@ namespace windows
 		HWND GetHWnd() const;
 
 	private:
-		int				m_width;
-		int				m_height;
-		std::string		m_windowName;
-		std::string		m_className;
-		std::wstring	m_wideWindowName;
-		std::wstring	m_wideClassName;
+		int	m_width;
+		int	m_height;
 
-		HWND		    m_hWnd = nullptr;
-		HINSTANCE	    m_hInstance = nullptr;
+		std::string m_windowName;
+		std::string	m_className;
+		std::wstring m_wideWindowName;
+		std::wstring m_wideClassName;
+
+		HWND m_hWnd = nullptr;
+		HINSTANCE m_hInstance = nullptr;
 
 	private:
 		std::wstring StringToWide(const std::string& str) { return std::wstring(str.begin(), str.end()); }

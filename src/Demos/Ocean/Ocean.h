@@ -35,15 +35,13 @@ namespace DirectX11
 
 	struct OceanCB
 	{
-		DirectX::XMMATRIX wvpMatrix;
-		DirectX::XMMATRIX vpMatrix; //
-		DirectX::XMMATRIX projectorMatrix; //
+		DirectX::XMMATRIX vpMatrix;
+		DirectX::XMMATRIX projectorMatrix;
+
 		DirectX::XMFLOAT3 cameraPos;
-		float heightScale;
+		float heightScale; // Height of the waves.
 
 		float totalTime;
-		//float buffer1;
-		//float buffer2;
 	};
 }
 
@@ -78,33 +76,34 @@ namespace DirectX11
 		~Ocean();
 
 		bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<PerlinCB>& cbPerlin, ConstantBuffer<OceanCB>& cbOcean, UINT textureWidth, UINT textureHeight);
-		//void Draw(const Camera3D& camera, const DirectX::XMMATRIX& viewProjectionMatrix, ComputeShader& computeShader, PixelShader& ps, VertexShader& vs, double deltaTime);
 		void Draw(const Camera3D& camera, const DirectX::XMMATRIX& viewProjectionMatrix, ComputeShader& computeShader, PixelShader& ps, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double deltaTime);
 
 	private:
+		static constexpr float kWaveHeight = 5.f;
+		static double m_Time; // Should be fetched from main loop.
+
 		UINT m_Width;
 		UINT m_Height;
 
-		IndexBuffer									m_Indices;
-		VertexBuffer<OceanVertex>					m_Vertices;
-		ConstantBuffer<PerlinCB>*					m_pCB_CS_Perlin;
-		ConstantBuffer<OceanCB>*					m_pCB_VS_Ocean;
+		IndexBuffer m_Indices;
+		VertexBuffer<OceanVertex> m_Vertices;
+		ConstantBuffer<PerlinCB>* m_pCB_CS_Perlin;
+		ConstantBuffer<OceanCB>* m_pCB_VS_Ocean;
 
-		DirectX::XMMATRIX							m_WorldMatrix = DirectX::XMMatrixIdentity();
+		DirectX::XMMATRIX m_WorldMatrix = DirectX::XMMatrixIdentity();
 
 		ID3D11DeviceContext* m_pDeviceContext;
 
 		ID3D11UnorderedAccessView* perlinUAV = nullptr;
-		ID3D11ShaderResourceView* perlinSRV = nullptr;
+		ID3D11ShaderResourceView* perlinSRV  = nullptr;
 
 	private:
 		void SetupGrid(ID3D11Device* device);
-		//void SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs);
-		void SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double deltaTime, const DirectX::XMFLOAT3& pos);
+		void SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double totalTime, const DirectX::XMFLOAT3& pos);
 		void SetupPixelShaderStage(PixelShader& ps);
 		void SetupInputAssemblerStage(VertexShader& vs);
 
-		void GeneratePerlinNoise(ComputeShader computeShader, double deltaTime);
+		void GeneratePerlinNoise(ComputeShader computeShader, double totalTime);
 		void CreateUniformGridOfVertices(std::vector<OceanVertex>& vertices, std::vector<DWORD>& indices);
 
 		virtual void UpdateMatrix() override;

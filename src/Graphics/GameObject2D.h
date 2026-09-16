@@ -19,11 +19,6 @@ namespace DirectX11
 {
 	class GameObject2D : public GameObject
 	{
-	protected:
-		/*virtual void UpdateMatrix()
-		{
-			assert("UpdateMatrix must be overridden!" && 0);
-		}*/
 	};
 }
 

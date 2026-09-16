@@ -57,10 +57,9 @@ namespace DirectX11
 		m_pDeviceContext->IASetInputLayout(m_VertexShader.GetInputLayout());
 		m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		m_pDeviceContext->RSSetState(m_pRasterizerState.Get());
-		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0); // Set the depth stencil state.
-		//m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF); // Set the blend state.
-		m_pDeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF); // Transparancy off.
-		m_pDeviceContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf()); // Set the sampler state.
+		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
+		m_pDeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);				 // Transparancy off.
+		m_pDeviceContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf());
 		m_pDeviceContext->VSSetShader(m_VertexShader.GetShader(), nullptr, 0);
 		m_pDeviceContext->PSSetShader(m_PixelShader.GetShader(), nullptr, 0);
 
@@ -75,12 +74,11 @@ namespace DirectX11
 
 		// Light.
 		{
-			//m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			m_pDeviceContext->PSSetShader(m_PixelShaderWithNoLight.GetShader(), nullptr, 0);
 			m_Light.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
 		}
 
-		// Ocean
+		// Ocean.
 		{
 			m_pDeviceContext->IASetInputLayout(m_VertexShaderOcean.GetInputLayout());
 			m_pDeviceContext->PSSetShader(m_PixelShaderOcean.GetShader(), nullptr, 0);
@@ -102,7 +100,7 @@ namespace DirectX11
 		/////////////////////////
 
 		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateTransparant.Get(), 0);
-		m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF); // Set the blend state.
+		m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF);
 		m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// Grid.
@@ -110,7 +108,7 @@ namespace DirectX11
 			m_pDeviceContext->IASetInputLayout(m_VertexShaderGrid.GetInputLayout());
 			m_pDeviceContext->PSSetShader(m_PixelShaderGrid.GetShader(), nullptr, 0);
 			m_pDeviceContext->VSSetShader(m_VertexShaderGrid.GetShader(), nullptr, 0);
-			//m_InfiniteGrid.Draw(m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), 0.1f, 1000.0f);
+			m_InfiniteGrid.Draw(m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), 0.1f, 10000.0f);
 		}
 
 		////////////////
@@ -119,9 +117,9 @@ namespace DirectX11
 
 		// Spritesheet.
 		{
-			// Reset for sprite drawing, should be called before Axis rendering.
-			// But i keep this here for testing purposes.
-			m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			m_pDeviceContext->IASetInputLayout(m_VertexShaderSprite.GetInputLayout());
+			m_pDeviceContext->PSSetShader(m_PixelShaderSprite.GetShader(), nullptr, 0);
+			m_pDeviceContext->VSSetShader(m_VertexShaderSprite.GetShader(), nullptr, 0);
 			m_Sprite.Draw(m_Camera2D.GetWorldMatrix() * m_Camera2D.GetOrthoMatrix());
 		}
 
@@ -179,37 +177,37 @@ namespace DirectX11
 
 		DXGI_SWAP_CHAIN_DESC swap_chain_description = { 0 };
 
-		swap_chain_description.BufferDesc.Width = m_WindowWidth;				// Set the width of the back buffer.
-		swap_chain_description.BufferDesc.Height = m_WindowHeight;				// Set the height of the back buffer.
+		swap_chain_description.BufferDesc.Width = m_WindowWidth;
+		swap_chain_description.BufferDesc.Height = m_WindowHeight;
 		swap_chain_description.BufferDesc.RefreshRate.Numerator = 60;			// Set the refresh rate of the back buffer, currently hardcoded to 60 FPS.
 		swap_chain_description.BufferDesc.RefreshRate.Denominator = 1;
-		swap_chain_description.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// Set the format of the back buffer to 32 bit color.
+		swap_chain_description.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		swap_chain_description.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		swap_chain_description.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-		swap_chain_description.SampleDesc.Count = 1;	// Set the number of multisamples to use.
-		swap_chain_description.SampleDesc.Quality = 0;	// Set the quality of the multisamples to use.
+		swap_chain_description.SampleDesc.Count = 1;
+		swap_chain_description.SampleDesc.Quality = 0;
 
-		swap_chain_description.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// Set the swap chain to be used as a render target.
-		swap_chain_description.BufferCount = 1;									// Set the number of back buffers to use.
-		swap_chain_description.OutputWindow = hWnd;								// Set the window to render to.
-		swap_chain_description.Windowed = TRUE;									// Set the swap chain to be windowed or not.
-		swap_chain_description.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;			// Set the swap effect to discard the old frame.
-		swap_chain_description.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;	// Set the swap chain to allow mode switching -> allows to switch between fullscreen, windowed mode and resize the window.
+		swap_chain_description.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swap_chain_description.BufferCount = 1;
+		swap_chain_description.OutputWindow = hWnd;
+		swap_chain_description.Windowed = TRUE;
+		swap_chain_description.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		swap_chain_description.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 		HRESULT hr;
 		hr = D3D11CreateDeviceAndSwapChain(
 			adapters[0].m_pAdapter,		// Currently we choose the adapter with the highest memory.
-			D3D_DRIVER_TYPE_UNKNOWN,	// We are specifying the adapter, so we use unknown.
-			nullptr,					// Not using a software driver.
-			NULL,						// Flags for runtime layers.
-			nullptr,					// Feature levels array.
-			NULL,						// Number of feature levels.
-			D3D11_SDK_VERSION,			// SDK version.
+			D3D_DRIVER_TYPE_UNKNOWN,
+			nullptr,
+			NULL,
+			nullptr,
+			NULL,
+			D3D11_SDK_VERSION,
 			&swap_chain_description,
 			m_pSwapChain.GetAddressOf(),
 			m_pDevice.GetAddressOf(),
-			nullptr, 					// Supported feature level.
+			nullptr,
 			m_pDeviceContext.GetAddressOf()
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create device and swapchain.", false);
@@ -219,8 +217,8 @@ namespace DirectX11
 		COM_ERROR_IF_FAILED_RETURN(hr, "GetBuffer Failed.", false);
 
 		hr = m_pDevice->CreateRenderTargetView(
-			back_buffer.Get(),	// No resource to use.
-			nullptr,			// No view description.
+			back_buffer.Get(),
+			nullptr,
 			m_pRenderTargetView.GetAddressOf()
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create render target view.", false);
@@ -228,18 +226,18 @@ namespace DirectX11
 		// Enable depth.
 		CD3D11_TEXTURE2D_DESC depth_stencil_buffer_description(DXGI_FORMAT_D24_UNORM_S8_UINT, m_WindowWidth, m_WindowHeight);
 		depth_stencil_buffer_description.MipLevels = 1;
-		depth_stencil_buffer_description.BindFlags = D3D11_BIND_DEPTH_STENCIL; // Set the buffer to be used as a depth stencil buffer.
+		depth_stencil_buffer_description.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 		hr = m_pDevice->CreateTexture2D(
 			&depth_stencil_buffer_description,
-			nullptr, // No data to use.
+			nullptr,
 			m_pDepthStencilBuffer.GetAddressOf()
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create depth stencil buffer.", false);
 
 		hr = m_pDevice->CreateDepthStencilView(
 			m_pDepthStencilBuffer.Get(),
-			nullptr, // No view description.
+			nullptr,
 			m_pDepthStencilView.GetAddressOf()
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create depth stencil view.", false);
@@ -249,7 +247,7 @@ namespace DirectX11
 		///////////////////
 
 		m_pDeviceContext->OMSetRenderTargets(
-			1,		// Number of render targets.
+			1,									// Number of render targets.
 			m_pRenderTargetView.GetAddressOf(),
 			m_pDepthStencilView.Get()
 		);
@@ -264,7 +262,6 @@ namespace DirectX11
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create depth stencil state.", false);
 
-		// test
 		CD3D11_DEPTH_STENCIL_DESC depth_stencil_state_description_transparant(D3D11_DEFAULT);
 		depth_stencil_state_description_transparant.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 		depth_stencil_state_description_transparant.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -274,7 +271,6 @@ namespace DirectX11
 			m_pDepthStencilStateTransparant.GetAddressOf()
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create depth stencil state.", false);
-		// test
 
 		////////////////
 		// RASTERIZER //
@@ -292,14 +288,6 @@ namespace DirectX11
 		hr = m_pDevice->CreateRasterizerState(
 			&rasterizer_description,
 			m_pRasterizerState.GetAddressOf()
-		);
-		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create rasterizer state.", false);
-
-		CD3D11_RASTERIZER_DESC rasterizer_description_Cull_Front(D3D11_DEFAULT);
-		rasterizer_description_Cull_Front.CullMode = D3D11_CULL_FRONT;
-		hr = m_pDevice->CreateRasterizerState(
-			&rasterizer_description_Cull_Front,
-			m_pRasterizerCullFrontState.GetAddressOf()
 		);
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create rasterizer state.", false);
 
@@ -330,7 +318,7 @@ namespace DirectX11
 
 		// Setup sampler state.
 		CD3D11_SAMPLER_DESC sampler_description(D3D11_DEFAULT);
-		sampler_description.AddressU = D3D11_TEXTURE_ADDRESS_WRAP; // Wrap the texture.
+		sampler_description.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		sampler_description.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		sampler_description.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
@@ -501,11 +489,10 @@ namespace DirectX11
 		hr = m_CB_PS_light.Init(m_pDevice.Get(), m_pDeviceContext.Get());
 		COM_ERROR_IF_FAILED_RETURN(hr, L"Failed to initialize constant pixel buffer.", false);
 
-		m_CB_PS_light.data.ambientLightColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f); // White, will show full red, blue and green value of a pixel.
-		m_CB_PS_light.data.ambientLightStrength = 1.0f; // Fully lit.
+		m_CB_PS_light.data.ambientLightColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+		m_CB_PS_light.data.ambientLightStrength = 1.0f;
 
 		// Load object(s).
-		//if (!m_GameObject.Init("src/Data/Objects/Samples/dodge_challenger.fbx", m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
 		if (!m_GameObject.Init("src/Data/Objects/Nanosuit/Nanosuit.obj", m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_VS_vertexshader))
 			return false;
 
@@ -519,11 +506,8 @@ namespace DirectX11
 			return false;
 
 		// Ocean
-
 		if (!m_Ocean.Init(m_pDevice.Get(), m_pDeviceContext.Get(), m_CB_CS_Perlin, m_CB_VS_Ocean, 256, 256))
 			return false;
-
-		// Ocean
 
 		m_Axis.SetPosition(0.0f, 0.0f, 0.0f);
 		m_Axis.SetScale(5.0f, 5.0f, 5.0f);
@@ -541,9 +525,8 @@ namespace DirectX11
 
 		m_Camera2D.SetProjectionValues(static_cast<float>(m_WindowWidth), static_cast<float>(m_WindowHeight), 0.0f, 1.0f);
 
-		//m_Camera.SetPosition(2.0f, 2.0f, 2.0f);
-		m_Camera.SetPosition(0.0f, 2.0f, 0.0f);
-		m_Camera.SetProjectionValues(90.0f, static_cast<float>(m_WindowWidth) / static_cast<float>(m_WindowHeight), 0.1f, 1000.0f);
+		m_Camera.SetPosition(5.f, 5.f, 0.f);
+		m_Camera.SetProjectionValues(90.0f, static_cast<float>(m_WindowWidth) / static_cast<float>(m_WindowHeight), .1f, 10000.f);
 		m_Camera.SetLookAtPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 		return true;

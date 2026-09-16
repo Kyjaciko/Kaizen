@@ -25,14 +25,14 @@ namespace DirectX11
 		void Draw(const DirectX::XMMATRIX& worldMatrix, const DirectX::XMMATRIX& viewProjectionMatrix);
 
 	private:
-		std::string								m_Directory;
+		std::string	m_Directory;
 
 		// Model data.
-		std::vector<Mesh>						m_Meshes;
+		std::vector<Mesh> m_Meshes;
 
-		ID3D11Device*							m_pDevice;
-		ID3D11DeviceContext*					m_pDeviceContext;
-		ConstantBuffer<CB_VS_vertexshader>*		m_pCB_VS_VertexShader;
+		ID3D11Device* m_pDevice;
+		ID3D11DeviceContext* m_pDeviceContext;
+		ConstantBuffer<CB_VS_vertexshader>* m_pCB_VS_VertexShader;
 
 	private:
 		bool LoadModel(const std::string& filePath);

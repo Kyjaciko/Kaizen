@@ -46,8 +46,8 @@ namespace windows
 		int GetPosY() const;
 
 	private:
-		EventType		m_eventType;
-		MousePoint		m_position;
+		EventType m_eventType;
+		MousePoint m_position;
 	};
 }
 

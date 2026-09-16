@@ -33,7 +33,7 @@ namespace DirectX11
 		while (SUCCEEDED(p_factory->EnumAdapters(index, &p_adapter)))
 		{
 			m_Adapters.push_back(AdapterData(p_adapter));
-			index++;
+			++index;
 		}
 
 		return m_Adapters;

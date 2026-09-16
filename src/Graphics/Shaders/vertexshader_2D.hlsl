@@ -6,7 +6,7 @@ cbuffer perObjectBuffer : register(b0)
 struct VS_INPUT
 {
     float3 inPos : POSITION;
-    float2 inTexCoord : TEXCOORD;   // Able to choose between color or texture
+    float2 inTexCoord : TEXCOORD; // Able to choose between color or texture
     float4 inColor : COLOR;
 };
 

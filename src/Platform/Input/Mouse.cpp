@@ -103,7 +103,6 @@ namespace windows
 
 	MouseEvent Mouse::ReadEvent()
 	{
-		// No mouse event to be read? -> return empty mouse event.
 		if (m_eventBuffer.empty()) return MouseEvent();
 		
 		// Get first mouse event from queue and remove it.

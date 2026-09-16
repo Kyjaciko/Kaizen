@@ -56,15 +56,15 @@ namespace DirectX11
 	void GameObject3D::UpdateDirectionVectors()
 	{
 		DirectX::XMMATRIX vector_rotation_matrix = DirectX::XMMatrixRotationRollPitchYaw(m_Rotation.x, m_Rotation.y, 0.0f);
-		m_ForwardVector		= DirectX::XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vector_rotation_matrix);
-		m_BackwardVector	= DirectX::XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vector_rotation_matrix);
-		m_LeftVector		= DirectX::XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vector_rotation_matrix);
-		m_RightVector		= DirectX::XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vector_rotation_matrix);
+		m_ForwardVector	 = DirectX::XMVector3TransformNormal(DEFAULT_FORWARD_VECTOR, vector_rotation_matrix);
+		m_BackwardVector = DirectX::XMVector3TransformNormal(DEFAULT_BACKWARD_VECTOR, vector_rotation_matrix);
+		m_LeftVector	 = DirectX::XMVector3TransformNormal(DEFAULT_LEFT_VECTOR, vector_rotation_matrix);
+		m_RightVector	 = DirectX::XMVector3TransformNormal(DEFAULT_RIGHT_VECTOR, vector_rotation_matrix);
 
 		DirectX::XMMATRIX vector_rotation_matrix_NO_Y = DirectX::XMMatrixRotationRollPitchYaw(0.0f, m_Rotation.y, 0.0f);
-		m_ForwardVector_NO_Y	= DirectX::XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vector_rotation_matrix_NO_Y);
-		m_BackwardVector_NO_Y	= DirectX::XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vector_rotation_matrix_NO_Y);
-		m_LeftVector_NO_Y		= DirectX::XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vector_rotation_matrix_NO_Y);
-		m_RightVector_NO_Y		= DirectX::XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vector_rotation_matrix_NO_Y);
+		m_ForwardVector_NO_Y  = DirectX::XMVector3TransformNormal(DEFAULT_FORWARD_VECTOR, vector_rotation_matrix_NO_Y);
+		m_BackwardVector_NO_Y = DirectX::XMVector3TransformNormal(DEFAULT_BACKWARD_VECTOR, vector_rotation_matrix_NO_Y);
+		m_LeftVector_NO_Y	  = DirectX::XMVector3TransformNormal(DEFAULT_LEFT_VECTOR, vector_rotation_matrix_NO_Y);
+		m_RightVector_NO_Y	  = DirectX::XMVector3TransformNormal(DEFAULT_RIGHT_VECTOR, vector_rotation_matrix_NO_Y);
 	}
 }

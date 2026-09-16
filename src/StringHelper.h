@@ -30,7 +30,7 @@ public:
 		size_t off_1 = filePath.find_last_of('\\');
 		size_t off_2 = filePath.find_last_of('/');
 
-		// No slash or backslash?
+		// If there is no slash or backslash the file is in the directory.
 		if (off_1 == std::string::npos && off_2 == std::string::npos) return "";
 
 		else if (off_1 == std::string::npos) return filePath.substr(0, off_2);

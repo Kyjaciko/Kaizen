@@ -8,9 +8,9 @@ namespace DirectX11
 {
 	bool Model::Init(const std::string& filePath, ID3D11Device* device, ID3D11DeviceContext* deviceContext, ConstantBuffer<CB_VS_vertexshader>& cb_vs_VertexBuffer)
 	{
-		m_pDevice				= device;
-		m_pDeviceContext		= deviceContext;
-		m_pCB_VS_VertexShader	= &cb_vs_VertexBuffer;
+		m_pDevice			  = device;
+		m_pDeviceContext	  = deviceContext;
+		m_pCB_VS_VertexShader = &cb_vs_VertexBuffer;
 
 		if (!LoadModel(filePath))
 			return false;
@@ -25,11 +25,10 @@ namespace DirectX11
 		
 		for (int i = 0; i < m_Meshes.size(); i++)
 		{
-			// Update constant buffer with World-View-Projection matrix.
-			m_pCB_VS_VertexShader->data.wvpMatrix = m_Meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;	// Calculate World-View-Projection Matrix.
-			m_pCB_VS_VertexShader->data.worldMatrix = m_Meshes[i].GetTransformMatrix() * worldMatrix;						// Calculate WorldMatrix.
-			//m_pCB_VS_VertexShader->data.wvpMatrix = DirectX::XMMatrixTranspose(m_pCB_VS_VertexShader->data.mat);				// Convert from row major -> column major (hlsl expects this), specified in hlsl.
-			m_pCB_VS_VertexShader->ApplyChanges();																		// Update the constant buffer.
+			m_pCB_VS_VertexShader->data.wvpMatrix = m_Meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
+			m_pCB_VS_VertexShader->data.worldMatrix = m_Meshes[i].GetTransformMatrix() * worldMatrix;
+			//m_pCB_VS_VertexShader->data.wvpMatrix = DirectX::XMMatrixTranspose(m_pCB_VS_VertexShader->data.mat);			// Convert from row major -> column major (no longer needed, row_major specified in shader).
+			m_pCB_VS_VertexShader->ApplyChanges();
 
 			m_Meshes[i].Draw();
 		}

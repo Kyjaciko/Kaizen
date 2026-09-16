@@ -36,9 +36,9 @@ namespace DirectX11
 		ID3D11InputLayout* GetInputLayout();
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D11VertexShader>		m_pVertexShader;
-		Microsoft::WRL::ComPtr<ID3D10Blob>				m_pShaderBuffer;
-		Microsoft::WRL::ComPtr<ID3D11InputLayout>		m_pInputLayout;		// Used to determine how the vertex data is laid out in memory.
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_pVertexShader;
+		Microsoft::WRL::ComPtr<ID3D10Blob> m_pShaderBuffer;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pInputLayout;
 	};
 }
 
@@ -56,8 +56,8 @@ namespace DirectX11
 		ID3D10Blob* GetBuffer();
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D11PixelShader>		m_pPixelShader;
-		Microsoft::WRL::ComPtr<ID3D10Blob>				m_pShaderBuffer;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pPixelShader;
+		Microsoft::WRL::ComPtr<ID3D10Blob> m_pShaderBuffer;
 	};
 }
 
@@ -75,8 +75,8 @@ namespace DirectX11
 		ID3D10Blob* GetBuffer();
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D11ComputeShader>		m_pComputeShader;
-		Microsoft::WRL::ComPtr<ID3D10Blob>				m_pShaderBuffer;
+		Microsoft::WRL::ComPtr<ID3D11ComputeShader> m_pComputeShader;
+		Microsoft::WRL::ComPtr<ID3D10Blob> m_pShaderBuffer;
 	};
 }
 

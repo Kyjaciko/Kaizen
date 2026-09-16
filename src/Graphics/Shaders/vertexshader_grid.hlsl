@@ -24,10 +24,10 @@ struct VS_OUTPUT
 
 float3 UnprojectPoint(float x, float y, float z, float4x4 invView, float4x4 invProjection)
 {
-    float4 ndc = float4(x, y, z, 1.0f);             // Input is already in NDC space.
-    float4 view = mul(ndc, invProjectionMatrix);    // NDC -> View Space.
-    float4 world = mul(view, invViewMatrix);        // View Space -> World Space.
-    return world.xyz / world.w;                     // Convet back to regular 3D coordinates.
+    float4 ndc = float4(x, y, z, 1.0f);          // Input is already in NDC space.
+    float4 view = mul(ndc, invProjectionMatrix);
+    float4 world = mul(view, invViewMatrix);
+    return world.xyz / world.w;
 }
 
 VS_OUTPUT main(VS_INPUT input)

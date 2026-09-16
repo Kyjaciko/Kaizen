@@ -16,10 +16,10 @@ namespace DirectX11
 
 		std::vector<Vertex2D> vertex_data =
 		{
-			Vertex2D(-0.5f, -0.5f, 0.0f, 0.0f, 0.0f),	// Top left.
-			Vertex2D(0.5f, -0.5f, 0.0f, 1.0f, 0.0f),	// Top right.
-			Vertex2D(-0.5f, 0.5f, 0.0f, 0.0f, 1.0f),	// Bottom left.
-			Vertex2D(0.5f, 0.5f, 0.0f, 1.0f, 1.0f)		// Bottom right.
+			Vertex2D(-0.5f, -0.5f, 0.0f, 0.0f, 0.0f), // Top left.
+			Vertex2D(0.5f, -0.5f, 0.0f, 1.0f, 0.0f),  // Top right.
+			Vertex2D(-0.5f, 0.5f, 0.0f, 0.0f, 1.0f),  // Bottom left.
+			Vertex2D(0.5f, 0.5f, 0.0f, 1.0f, 1.0f)	  // Bottom right.
 		};
 
 		std::vector<DWORD> index_data =

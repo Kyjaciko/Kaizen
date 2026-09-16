@@ -25,8 +25,8 @@ namespace DirectX11
 		void Draw(const DirectX::XMMATRIX& viewProjectionMatrix);
 
 	protected:
-		Model				m_Model;
-		DirectX::XMMATRIX	m_WorldMatrix = DirectX::XMMatrixIdentity();
+		Model m_Model;
+		DirectX::XMMATRIX m_WorldMatrix = DirectX::XMMatrixIdentity();
 
 	protected:
 		virtual void UpdateMatrix() override;

@@ -45,6 +45,7 @@ namespace DirectX11
 		DirectX::XMMATRIX viewProjectionMatrix = viewMatrix * projectionMatrix;
 		DirectX::XMMATRIX wvp_matrix = m_WorldMatrix * viewProjectionMatrix;
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pCB_VS_VertexShader_grid->GetAddressOf());
+		m_pDeviceContext->PSSetConstantBuffers(0, 1, m_pCB_VS_VertexShader_grid->GetAddressOf());
 		m_pCB_VS_VertexShader_grid->data.wvpMatrix = wvp_matrix;
 		m_pCB_VS_VertexShader_grid->data.invViewMatrix = DirectX::XMMatrixInverse(nullptr, viewMatrix);
 		m_pCB_VS_VertexShader_grid->data.invProjectionMatrix = DirectX::XMMatrixInverse(nullptr, projectionMatrix);
@@ -60,7 +61,6 @@ namespace DirectX11
 
 	void InfiniteGrid::UpdateMatrix()
 	{
-		// 
 		m_WorldMatrix = DirectX::XMMatrixScaling(m_Scale.x, m_Scale.y, m_Scale.z) * DirectX::XMMatrixRotationRollPitchYaw(m_Rotation.x, m_Rotation.y, m_Rotation.z) * DirectX::XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z);
 	}
 }

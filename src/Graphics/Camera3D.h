@@ -28,8 +28,8 @@ namespace DirectX11
 		const DirectX::XMMATRIX& GetProjectionMatrix() const;
 
 	private:
-		DirectX::XMMATRIX	m_ViewMatrix;
-		DirectX::XMMATRIX	m_ProjectionMatrix;
+		DirectX::XMMATRIX m_ViewMatrix;
+		DirectX::XMMATRIX m_ProjectionMatrix;
 
 	private:
 		virtual void UpdateMatrix() override;

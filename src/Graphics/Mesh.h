@@ -40,11 +40,14 @@ namespace DirectX11
 		const DirectX::XMMATRIX& GetTransformMatrix();
 
 	public:
-		DirectX::XMMATRIX		m_TransformMatrix;
-		VertexBuffer<Vertex3D>	m_VertexBuffer;
-		IndexBuffer				m_IndexBuffer;
-		ID3D11DeviceContext*	m_pDeviceContext;
-		std::vector<Texture>	m_Textures;
+		DirectX::XMMATRIX m_TransformMatrix;
+
+		VertexBuffer<Vertex3D> m_VertexBuffer;
+		IndexBuffer	m_IndexBuffer;
+
+		ID3D11DeviceContext* m_pDeviceContext;
+
+		std::vector<Texture> m_Textures;
 	};
 }
 

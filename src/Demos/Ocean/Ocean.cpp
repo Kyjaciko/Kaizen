@@ -4,6 +4,8 @@
 
 #include "Ocean.h"
 
+double DirectX11::Ocean::m_Time = 0.f;
+
 namespace DirectX11
 {
 	Ocean::~Ocean()
@@ -46,17 +48,17 @@ namespace DirectX11
 	void Ocean::Draw(const Camera3D& camera, const DirectX::XMMATRIX& viewProjectionMatrix, ComputeShader& computeShader, PixelShader& ps, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double deltaTime)
 	{
 		DirectX::XMMATRIX projectorMatrix = DirectX::XMMatrixIdentity();
-		float waveAmplitude = 2.0f; // moet gelijk zijn in SetupVertexShaderStage!
-		//if (!CalculateProjectorMatrix(projectorMatrix, camera, DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), 0.1f, 1000.0f))
-		if (!CalculateProjectorMatrix(projectorMatrix, camera, this->GetPositionVector(), waveAmplitude))
+		if (!CalculateProjectorMatrix(projectorMatrix, camera, this->GetPositionVector(), kWaveHeight))
 			return;
 
-		GeneratePerlinNoise(computeShader, deltaTime);
-		SetupVertexShaderStage(viewProjectionMatrix, projectorMatrix, vs, ppSamplers, deltaTime, camera.GetPositionFloat3());
+		m_Time += deltaTime;
+		GeneratePerlinNoise(computeShader, m_Time);
+		SetupVertexShaderStage(viewProjectionMatrix, projectorMatrix, vs, ppSamplers, m_Time, camera.GetPositionFloat3());
 		SetupPixelShaderStage(ps);
 		SetupInputAssemblerStage(vs);
 
-		ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+		// Unbind shaders.
+		ID3D11ShaderResourceView* nullSRV[] = { nullptr };
 		m_pDeviceContext->VSSetShaderResources(0, 1, nullSRV);
 		m_pDeviceContext->PSSetShaderResources(0, 1, nullSRV);
 	}
@@ -103,21 +105,18 @@ namespace DirectX11
 		perlin_texture->Release();
 	}
 
-	void Ocean::SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double deltaTime, const DirectX::XMFLOAT3& pos)
+	void Ocean::SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double totalTime, const DirectX::XMFLOAT3& pos)
 	{
 		m_pDeviceContext->VSSetShader(vs.GetShader(), nullptr, 0);
 
 		// Update constant buffer.
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pCB_VS_Ocean->GetAddressOf());
-		m_pCB_VS_Ocean->data.wvpMatrix		= m_WorldMatrix * viewProjectionMatrix;
-		m_pCB_VS_Ocean->data.vpMatrix = viewProjectionMatrix; // Camera VP
-		m_pCB_VS_Ocean->data.projectorMatrix = projectorMatrix; // Range * InvProj
+		m_pCB_VS_Ocean->data.vpMatrix = viewProjectionMatrix;
+		m_pCB_VS_Ocean->data.projectorMatrix = projectorMatrix;
 		m_pCB_VS_Ocean->data.cameraPos = pos;
-		m_pCB_VS_Ocean->data.heightScale = 5.0f; // Zet dit hoog genoeg om effect te zien! (bv. 2.0f - 10.0f)
+		m_pCB_VS_Ocean->data.heightScale = kWaveHeight;
 
-		static double time = 0.0f;
-		time += deltaTime;
-		m_pCB_VS_Ocean->data.totalTime = static_cast<float>(time);
+		m_pCB_VS_Ocean->data.totalTime = static_cast<float>(totalTime);
 		m_pCB_VS_Ocean->ApplyChanges();
 
 		m_pDeviceContext->VSSetShaderResources(0, 1, &perlinSRV);
@@ -139,25 +138,23 @@ namespace DirectX11
 		m_pDeviceContext->DrawIndexed(m_Indices.IndexCount(), 0, 0);
 	}
 
-	void Ocean::GeneratePerlinNoise(ComputeShader computeShader, double deltaTime)
+	void Ocean::GeneratePerlinNoise(ComputeShader computeShader, double totalTime)
 	{
 		// Update constant buffer.
-		static double time = 0.0f;
-		time += deltaTime;
-		m_pCB_CS_Perlin->data.width			= m_Width;
-		m_pCB_CS_Perlin->data.height		= m_Height;
-		m_pCB_CS_Perlin->data.tileCount		= 8.0f;
-		m_pCB_CS_Perlin->data.gridSize		= 32.0f;
-		m_pCB_CS_Perlin->data.numOctaves	= 4; // origineel 8
-		m_pCB_CS_Perlin->data.totalTime		= time;
+		m_pCB_CS_Perlin->data.width		 = m_Width;
+		m_pCB_CS_Perlin->data.height     = m_Height;
+		m_pCB_CS_Perlin->data.tileCount  = 8.0f;
+		m_pCB_CS_Perlin->data.gridSize   = 32.0f;
+		m_pCB_CS_Perlin->data.numOctaves = 4; // Can be 8.
+		m_pCB_CS_Perlin->data.totalTime  = totalTime;
 		m_pCB_CS_Perlin->ApplyChanges();
 
-		// Bind compute shader, constant buffer (on b0) and UAV (on u0).
+		// Bind constant buffer on b0 and UAV on u0.
 		m_pDeviceContext->CSSetShader(computeShader.GetShader(), nullptr, 0);
 		m_pDeviceContext->CSSetConstantBuffers(0, 1, m_pCB_CS_Perlin->GetAddressOf());
 		m_pDeviceContext->CSSetUnorderedAccessViews(0, 1, &perlinUAV, nullptr);
 
-		// Dispatch, adjust for threadgroup.
+		// Round UP not down.
 		UINT tgX = (m_Width + 15) / 16;
 		UINT tgY = (m_Height + 15) / 16;
 		m_pDeviceContext->Dispatch(tgX, tgY, 1);
@@ -177,7 +174,7 @@ namespace DirectX11
 		const float GRID_WIDTH = 1.0f;
 		const float GRID_DEPTH = 1.0f;
 
-		// Avoid recizes.
+		// Avoid resizes.
 		vertices.reserve(NUM_VERTICES_X * NUM_VERTICES_Y);
 		indices.reserve((NUM_VERTICES_X - 1) * (NUM_VERTICES_Y - 1) * 6);
 
@@ -199,8 +196,8 @@ namespace DirectX11
 		// Fill indexbuffer.
 		for (UINT row = 0; row < NUM_VERTICES_Y - 1; ++row)
 		{
-			UINT rowStart = row * NUM_VERTICES_X;				// Index of first vertex.
-			UINT nextRowStart = (row + 1) * NUM_VERTICES_X;		// Index of first vertex in the next row.
+			UINT rowStart = row * NUM_VERTICES_X;			// Index of first vertex.
+			UINT nextRowStart = (row + 1) * NUM_VERTICES_X; // Index of first vertex in the next row.
 
 			for (UINT col = 0; col < NUM_VERTICES_X - 1; ++col)
 			{

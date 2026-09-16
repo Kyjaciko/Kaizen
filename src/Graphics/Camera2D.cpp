@@ -8,10 +8,10 @@ namespace DirectX11
 {
 	Camera2D::Camera2D()
 	{
-		m_Position			= DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_PositionVector	= DirectX::XMVectorZero();
-		m_Rotation			= DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_RotationVector	= DirectX::XMVectorZero();
+		m_Position		 = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_PositionVector = DirectX::XMVectorZero();
+		m_Rotation		 = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_RotationVector = DirectX::XMVectorZero();
 		UpdateMatrix();
 	}
 

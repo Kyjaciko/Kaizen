@@ -11,7 +11,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	if (FAILED(hr)) return -1;
 
 	EngineName::Engine engine;
-	if (engine.Init(hInstance, "Invasion", "DirectX11WindowClass", 5120, 1440))
+	if (engine.Init(hInstance, "Invasion", "DirectX11WindowClass", 1920, 1080))
 	{
 		engine.Run();
 	}

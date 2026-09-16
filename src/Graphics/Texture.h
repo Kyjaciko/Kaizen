@@ -56,9 +56,9 @@ namespace DirectX11
 		ID3D11ShaderResourceView** GetTextureResourceViewAddress();
 
 	private:
-		aiTextureType										m_Type = aiTextureType_UNKNOWN;
-		Microsoft::WRL::ComPtr<ID3D11Resource>				m_Texture;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_TextureView;
+		aiTextureType m_Type = aiTextureType_UNKNOWN;
+		Microsoft::WRL::ComPtr<ID3D11Resource> m_Texture;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_TextureView;
 
 	private:
 		void Init1x1ColorTexture(ID3D11Device* device, const Color& colorData, aiTextureType type);

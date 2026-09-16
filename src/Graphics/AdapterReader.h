@@ -28,8 +28,8 @@ namespace DirectX11
 	class AdapterData
 	{
 	public:
-		IDXGIAdapter*		m_pAdapter = nullptr;
-		DXGI_ADAPTER_DESC	m_Description;		  // Holds GPU name, memory, etc.
+		IDXGIAdapter* m_pAdapter = nullptr;
+		DXGI_ADAPTER_DESC m_Description;	// Holds GPU name, memory, etc.
 
 	public:
 		AdapterData(IDXGIAdapter* pAdapter);

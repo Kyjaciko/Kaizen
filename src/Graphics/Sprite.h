@@ -28,14 +28,15 @@ namespace DirectX11
 		float GetHeight() const;
 
 	private:
-		IndexBuffer								m_Indices;
-		VertexBuffer<Vertex2D>					m_Vertices;
+		IndexBuffer	m_Indices;
+		VertexBuffer<Vertex2D> m_Vertices;
 		
-		std::unique_ptr<Texture>				m_Texture;
-		ID3D11DeviceContext*					m_pDeviceContext;
+		std::unique_ptr<Texture> m_Texture;
+		ID3D11DeviceContext* m_pDeviceContext;
 
-		ConstantBuffer<CB_VS_vertexshader_2d>*	m_pCB_VS_VertexShader2D;
-		DirectX::XMMATRIX						m_WorldMatrix = DirectX::XMMatrixIdentity();
+		ConstantBuffer<CB_VS_vertexshader_2d>* m_pCB_VS_VertexShader2D;
+
+		DirectX::XMMATRIX m_WorldMatrix = DirectX::XMMatrixIdentity();
 
 	private:
 		virtual void UpdateMatrix() override;

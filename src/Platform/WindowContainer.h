@@ -28,13 +28,10 @@ namespace windows
 		LRESULT WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	protected:
-		WindowFactory			m_windowFactory;
-		Keyboard				m_keyboard;
-		Mouse					m_mouse;
-		DirectX11::Graphics		m_gfx;
-
-	private:
-
+		WindowFactory m_windowFactory;
+		Keyboard m_keyboard;
+		Mouse m_mouse;
+		DirectX11::Graphics	m_gfx;
 	};
 }
 

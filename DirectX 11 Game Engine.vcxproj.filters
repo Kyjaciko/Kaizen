@@ -158,11 +158,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\NOTE.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\Platform\WindowContainer.h">
       <Filter>Header Files\Platform</Filter>
     </ClInclude>

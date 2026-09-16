@@ -31,22 +31,18 @@ namespace DirectX11
 		return m_ProjectionMatrix;
 	}
 
-	// Updates the view matrix and the movement vectors.
 	void Camera3D::UpdateMatrix()
 	{
 		using namespace DirectX;
 
-		// Calculate Camera3D rotation matrix.
 		XMMATRIX rotation_matrix = XMMatrixRotationRollPitchYaw(m_Rotation.x, m_Rotation.y, m_Rotation.z);
 
-		// Calculate unit vector of Camera3D target based of Camera3D forward value transformend by Camera3D rotation matrix.
-		XMVECTOR target = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, rotation_matrix);
-
-		// Adjust Camera3D target to be offset by the Camera3D's current position.
-		target += m_PositionVector;
+		// Calculate the unit vector of the camera's target, based of the forward value transformend by the rotation matrix.
+		XMVECTOR target = XMVector3TransformNormal(DEFAULT_FORWARD_VECTOR, rotation_matrix);
+		target += m_PositionVector; // Adjust the camera's target to be offset by the camera's current position.
 
 		// Calculate up direction based on current rotation.
-		XMVECTOR up = XMVector3TransformCoord(DEFAULT_UP_VECTOR, rotation_matrix);
+		XMVECTOR up = XMVector3TransformNormal(DEFAULT_UP_VECTOR, rotation_matrix);
 
 		// Rebuild view matrix.
 		m_ViewMatrix = XMMatrixLookAtLH(m_PositionVector, target, up);

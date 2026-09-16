@@ -49,12 +49,12 @@ namespace windows
 		MouseEvent ReadEvent();
 
 	private:
-		bool						m_leftIsPressed   = false;
-		bool						m_middleIsPressed = false;
-		bool						m_rightIsPressed  = false;
-		MousePoint					m_position;
-		std::queue<MouseEvent>		m_eventBuffer;
+		bool m_leftIsPressed   = false;
+		bool m_middleIsPressed = false;
+		bool m_rightIsPressed  = false;
 
+		MousePoint m_position;
+		std::queue<MouseEvent> m_eventBuffer;
 	};
 }
 

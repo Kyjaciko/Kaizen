@@ -39,17 +39,17 @@ namespace windows
 
 		// Create the actual window.
 		m_hWnd = CreateWindowEx(
-			WS_EX_APPWINDOW,		// Extended window style. Currently using the default extended window style.
+			WS_EX_APPWINDOW,
 			m_wideClassName.c_str(),
 			m_wideClassName.c_str(),
-			WS_OVERLAPPEDWINDOW,	// Window style. Currently using the default window style.
+			WS_OVERLAPPEDWINDOW,
 			wr.left,				// X position of the window. If this is CW_USEDEFAULT, the system chooses the X position.
 			wr.top,					// Y position of the window. If this is CW_USEDEFAULT, the system chooses the Y position.
 			wr.right - wr.left, 	// Width of the window. If this is CW_USEDEFAULT, the system chooses the width.
 			wr.bottom - wr.top,		// Height of the window. If this is CW_USEDEFAULT, the system chooses the height.
-			nullptr,				// Handle to the parent window. If this is NULL, the window has no parent.
-			nullptr, 				// Handle to the menu. If this is NULL, the window has no menu.
-			m_hInstance,			// Handle to the instance of module to be sued with this window.
+			nullptr,
+			nullptr,
+			m_hInstance,
 			pWindowContainer        // Pointer to any value to be passed to the window procedure.
 		);
 
@@ -135,14 +135,14 @@ namespace windows
 		wc.cbSize		 = sizeof(WNDCLASSEX);
 		wc.style		 = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; // Flags [HRedraw and VRedraw] to redraw the window when it is resized.
 		wc.lpfnWndProc	 = HandleMsgSetup;					   // Pointer to the window procedure for handling messages for this window.
-		wc.cbClsExtra	 = 0;								   // Extra bytes to allocate following the class structure.
-		wc.cbWndExtra	 = 0;								   // Extra bytes to allocate following the window instance.
-		wc.hInstance	 = m_hInstance;						   // Handle to the that contains the window procedure.
+		wc.cbClsExtra	 = 0;
+		wc.cbWndExtra	 = 0;
+		wc.hInstance	 = m_hInstance;
 		wc.hIcon		 = LoadIcon(NULL, IDI_APPLICATION);    // Handle to the class icon (must be a handle to an icon resource). Currently using the default icon.
 		wc.hCursor		 = LoadCursor(NULL, IDC_ARROW);		   // Handle to the class cursor. Currently using the default arrow cursor. If this is NULL, we have to explicitly set the cursor's shape each time it enters the window.
-		wc.hbrBackground = NULL;      						   // Handle to the class background brush for the window's background color.
-		wc.lpszMenuName  = NULL;							   // Pointer to a null terminated string for the menu.
-		wc.lpszClassName = m_wideClassName.c_str();			   // Pointer to a null terminated string for the class name.
+		wc.hbrBackground = NULL;
+		wc.lpszMenuName  = NULL;
+		wc.lpszClassName = m_wideClassName.c_str();
 		wc.hIconSm		 = LoadIcon(NULL, IDI_APPLICATION);	   // Handle to the small icon that appears in the taskbar and in the window's title bar. Currently using the default icon.
 
 		// Register the window class.

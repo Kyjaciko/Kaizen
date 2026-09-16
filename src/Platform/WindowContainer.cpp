@@ -16,7 +16,7 @@ namespace windows
 			RAWINPUTDEVICE raw_input_device;
 			raw_input_device.usUsagePage = 0x01;	// Generic desktop controls
 			raw_input_device.usUsage     = 0x02;	// Mouse
-			raw_input_device.dwFlags	 = 0;       // Flags
+			raw_input_device.dwFlags	 = 0;
 			raw_input_device.hwndTarget  = nullptr; // No target window, so it follows keyboard focus.
 
 			if (RegisterRawInputDevices(&raw_input_device, 1, sizeof(raw_input_device)) == FALSE) exit(-1);
@@ -62,7 +62,7 @@ namespace windows
 				m_keyboard.OnChar(character);
 			else
 			{
-				const bool was_pressed = lParam & 0x40000000;   // Has been pressed before? Check bit 30.
+				const bool was_pressed = lParam & 0x40000000;  // Has been pressed before? Check bit 30.
 				if (!was_pressed) m_keyboard.OnChar(character);
 			}
 			return 0;

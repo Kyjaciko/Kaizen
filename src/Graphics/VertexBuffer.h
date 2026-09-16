@@ -43,7 +43,7 @@ namespace DirectX11
 
 		HRESULT Init(ID3D11Device* device, T* data, UINT numVertices)
 		{
-			// Avoid memory leak by resetting the index buffer if it already exists.
+			// Avoid memory leaks by resetting the index buffer if it already exists.
 			if (m_pVertexBuffer.Get())
 				m_pVertexBuffer.Reset();
 
@@ -52,16 +52,15 @@ namespace DirectX11
 			D3D11_BUFFER_DESC buffer_description;
 			ZeroMemory(&buffer_description, sizeof(D3D11_BUFFER_DESC));
 
-			buffer_description.Usage			= D3D11_USAGE_DEFAULT;		// Usage of the buffer.
-			buffer_description.ByteWidth		= m_Stride * numVertices;	// Size of the buffer.
-			buffer_description.BindFlags		= D3D11_BIND_VERTEX_BUFFER; // Set the buffer to be used as a vertex buffer.
-			buffer_description.CPUAccessFlags	= 0;
-			buffer_description.MiscFlags		= 0;
+			buffer_description.Usage = D3D11_USAGE_DEFAULT;
+			buffer_description.ByteWidth = m_Stride * numVertices;
+			buffer_description.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			buffer_description.CPUAccessFlags = 0;
+			buffer_description.MiscFlags = 0;
 
 			D3D11_SUBRESOURCE_DATA buffer_data;
 			ZeroMemory(&buffer_data, sizeof(D3D11_SUBRESOURCE_DATA));
-
-			buffer_data.pSysMem = data; // Set the data to be used in the buffer.
+			buffer_data.pSysMem = data;
 
 			return device->CreateBuffer(&buffer_description, &buffer_data, m_pVertexBuffer.GetAddressOf());
 		}
@@ -73,9 +72,9 @@ namespace DirectX11
 		const UINT* StridePointer() const { return &m_Stride; }
 
 	private:
-		UINT									m_VertexCount;
-		UINT									m_Stride = sizeof(T);
-		Microsoft::WRL::ComPtr<ID3D11Buffer>	m_pVertexBuffer;
+		UINT m_VertexCount;
+		UINT m_Stride = sizeof(T);
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer;
 	};
 }
 

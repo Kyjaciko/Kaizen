@@ -1,72 +1,28 @@
-/*Texture2D<float4> PerlinTexture : register(t0);
-SamplerState samplerState : register(s0);
-
-cbuffer OceanCB : register(b0)
-{
-    row_major float4x4 wvpMatrix;
-    row_major float4x4 vpMatrix;
-    row_major float4x4 projectorMatrix;
-    float heightScale;
-};
-
-struct VS_INPUT
-{
-    float3 position : POSITION;
-    float2 uv       : TEXCOORD0;
-};
-
-struct VS_OUTPUT
-{
-    float4 outPos   : SV_POSITION;
-    float height    : TEXCOORD0;
-};
-
-VS_OUTPUT main(VS_INPUT input)
-{
-    VS_OUTPUT output;
-
-    // Sample the PerlinTexture.
-    float4 sampleColor = PerlinTexture.SampleLevel(samplerState, input.uv, 0);
-    float height = sampleColor.r;
-    
-    // Determine world position and transfer to clip space.
-    float3 worldPosition;
-    worldPosition.x = input.position.x;
-    worldPosition.y = height * heightScale;
-    worldPosition.z = input.position.z;
-    output.outPos = mul(float4(worldPosition, 1.0f), wvpMatrix);
-
-    // Pass height to pixelshader.
-    output.height = height;
-    return output;
-}*/
-
 Texture2D<float4> PerlinTexture : register(t0);
 SamplerState samplerState : register(s0);
 
 cbuffer OceanCB : register(b0)
 {
-    row_major float4x4 wvpMatrix; // Niet nodig voor projected grid, we bouwen eigen posities
-    row_major float4x4 vpMatrix; // Camera View * Projection
-    row_major float4x4 projectorMatrix; // Dit is jouw 'outFinalMatrix' (Range * InvProjector)
+    row_major float4x4 vpMatrix;
+    row_major float4x4 projectorMatrix;
     float3 cameraPos;
     
-    float heightScale; // Hoogte van de golven
+    float heightScale; // Height of waves.
     
     float totalTime;
 };
 
 struct VS_INPUT
 {
-    float3 position : POSITION; // Wordt genegeerd, we gebruiken UVs als grid
-    float2 uv : TEXCOORD0; // [0..1] Grid coordinaten
+    float3 position : POSITION;
+    float2 uv : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
     float4 outPos : SV_POSITION;
-    float3 worldPos : TEXCOORD0; // Handig voor belichting in PS
-    float2 texUV : TEXCOORD1; // UVs voor normal mapping etc.
+    float3 worldPos : TEXCOORD0;
+    float2 texUV : TEXCOORD1;
 };
 
 float2 RotateUV(float2 uv, float angle)
@@ -76,124 +32,93 @@ float2 RotateUV(float2 uv, float angle)
     return float2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);
 }
 
-VS_OUTPUT main(VS_INPUT input)
+// Make for every pixel on your screen a point on the water plane.
+// The distance between the points will vary based on the distance to the camera, creating a LOD system.
+//
+// Imagine having a spotlight that illuminates a flat surface diagonally from above.
+// If you were to put a transparent sheet of paper with a dotted grid on it in front of the spotlight, you would see the grid projected onto the surface.
+// If you were to mark all the points of the grid with a pen, remove the spotlight and put your head in the 
+// same position as the light was located in, you would see a grid that would look as if it were right in front
+// of you and not seen from an angle. Therefore keeping the same detail with minimal amount of triangles.
+float3 ProjectToWater(float2 uv)
 {
-    VS_OUTPUT output;
+    float4 PwA = mul(float4(uv, 0.0f, 1.0f), projectorMatrix); // Point on near plane (z = 0).
+    float4 PwB = mul(float4(uv, 1.0f, 1.0f), projectorMatrix); // Point on far plane (z = 1).
 
-    // -----------------------------------------------------------
-    // STAP 5: Projectie & Intersectie (Grid -> Wereld op S_base)
-    // -----------------------------------------------------------
-
-    // We hebben een grid punt (u,v) tussen 0 en 1.
-    // De projectorMatrix (Range * InvViewProj) transformeert dit direct
-    // naar World Space lijnen.
-    
-    // Punt op Near Plane (Z = 0 in DX)
-    float4 PwA = mul(float4(input.uv, 0.0f, 1.0f), projectorMatrix);
-    
-    // Punt op Far Plane (Z = 1 in DX)
-    float4 PwB = mul(float4(input.uv, 1.0f, 1.0f), projectorMatrix);
-
-    // Converteer van Homogeen naar Cartesiaans (Divide by W)
-    // Dit geeft de daadwerkelijke 3D lijnen in de wereld.
     float3 lineStart = PwA.xyz / PwA.w;
     float3 lineEnd = PwB.xyz / PwB.w;
-
-    // Bereken intersectie met het water vlak (Y = 0)
-    // Lijnvergelijking: P = Start + t * (End - Start)
-    // We willen weten waar P.y == 0.
-    // 0 = Start.y + t * (End.y - Start.y)
-    // t = -Start.y / (End.y - Start.y)
     
+    // Calculate intersection with water plane (Sbase, Y = 0).
+    // t = -Start.y / (End.y - Start.y).
     float3 lineDir = lineEnd - lineStart;
     
-    // Beveiliging tegen delen door nul (als we parallel aan water kijken)
+    // Avoid division by zero (meaning the camera is looking parallel to the water plane).
     float t = 0.0f;
-    if (abs(lineDir.y) > 0.0001f)
+    if (abs(lineDir.y) > 1e-4f)
     {
         t = -lineStart.y / lineDir.y;
     }
+
+    // Point on water plane (Sbase).
+    return (lineStart + lineDir * t);
+}
+
+VS_OUTPUT main(VS_INPUT input)
+{
+    VS_OUTPUT output;
     
-    // Als t < 0 of t > 1, raakt het grid het water niet binnen de range.
-    // Saturate klemt het vast aan de rand (horizon of near plane).
-    t = saturate(t);
-
-    // Het punt op het wateroppervlak (vlak)
-    float3 Pw = lineStart + lineDir * t;
-
-    // -----------------------------------------------------------
-    // STAP 6 & 7: Displacement (Hoogtekaart toepassen)
-    // -----------------------------------------------------------
-
-    // 1. Hoe groot is je grid (aantal vertices in de breedte)?
-// Dit moet je weten van je C++ code (bijv. 512).
-    float gridResolution = 256.0f + 1.0f;
-
-// 2. Wat is de afstand tot de camera?
-    float dist = distance(cameraPos, Pw.xyz);
-
-// 3. Bereken de geschatte wereld-grootte van 1 grid-cel op deze afstand.
-// Dit is gebaseerd op de projectie matrix eigenschappen (perspectief = dist * constant).
-// 'projectorScale' is een fudge factor die afhangt van je FOV (vaak rond 1.0 - 2.0).
-    float worldSpaceGridSpacing = (dist / gridResolution) * 2.0f;
-
-// 4. Mip Level berekening
-// We willen dat 1 pixel in de texture overeenkomt met 'worldSpaceGridSpacing'.
-// Texture size (bijv. 1024) speelt ook mee.
-    float textureResolutie = 256.0f; // Grootte van je Perlin noise texture
-    float worldScale = 500.0f; // Hoe groot 1 herhaling van de texture is in meters (base scale) // BELANGERIJK: Te klein (50.0): Veel swimming, want de golven zijn kleiner dan de grid-cel grootte in de verte.
-                               // Te groot (500.0): Golven zien eruit als heuvels, niet als water.
-
-                               // Golden Spot : Meestal rond de 100.0f tot 150.0f.
+    // Settings, should be passed by the CB.
+    static const float textureResolution = 256.f;
+    static const float gridResolution = 256.f;
+    static const float worldScale = 500.f;
     
-    float textureTexelSizeWorld = worldScale / textureResolutie;
+    // Project the pixel on the water plane (Sbase).
+    float3 Pw = ProjectToWater(input.uv);
 
-// De verhouding tussen wat we kunnen tonen (grid) en wat de texture biedt.
-    float ratio = worldSpaceGridSpacing / textureTexelSizeWorld;
+    // Apply displacement.
+    float2 baseUV;
+    {
+        float distToCamera = distance(cameraPos, Pw.xyz);
+        
+        float2 duv = float2(1.0f / gridResolution, 0.0f);
+        float3 PwRight = ProjectToWater(input.uv + duv);
+        float3 spacingVector = PwRight - Pw;
+        float worldSpaceGridSpacing = length(spacingVector);
+        
+        float textureTexelSizeWorld = worldScale / textureResolution;
+        float ratio = worldSpaceGridSpacing / textureTexelSizeWorld;
 
-// Log2 geeft het juiste miplevel
-    float lod = log2(max(1.0f, ratio)) + 2.f; // In de praktijk is deze bereking te perfect dus gebruiken we een offset om flikkering/alisaing te voorkomen. BELANGERIJK
-    
-    float2 baseUV = Pw.xz / worldScale;
-    //float combinedHeight = SampleStochastic(PerlinTexture, samplerState, Pw.xz / 20.0f, lod);
+        float lod = max(0.0f, log2(ratio));
+        
+        // Use 3 layers of Perlin noise to reduce tiling
+        float4 noise1, noise2, noise3;
+        baseUV = Pw.xz / worldScale;
+        
+        // Layer 1: Base (0° rotation)
+        {
+            float2 uv1 = baseUV;
+            noise1 = PerlinTexture.SampleLevel(samplerState, uv1, lod);
+        }
+        
+        // Layer 2: Rotated (factor 2.1 to avoid alignment with layer 1)
+        {
+            float2 uv2 = RotateUV(baseUV, 2.094) * 2.1f;
+            uv2 += float2(5.15, 1.33);
+            noise2 = PerlinTexture.SampleLevel(samplerState, uv2, lod);
+        }
+        
+        // Layer 3: Rotated (factor 4.3)
+        {
+            float2 uv3 = RotateUV(baseUV, 4.188) * 4.3f;
+            uv3 += float2(7.91, -4.24);
+            noise3 = PerlinTexture.SampleLevel(samplerState, uv3, lod);
+        }
+        
+        float combinedHeight = (noise1.r * 1.0f + noise2.r * 0.35f + noise3.r * 0.15f) / 1.5f;
+        Pw.y += combinedHeight * heightScale;
+    }
 
-    // --- DE MAGIE: 3 Lagen met Rotatie ---
-    
-    // Laag 1: Basis (0 graden rotatie)
-    float2 uv1 = baseUV;
-    // float4 noise1 = PerlinTexture.SampleLevel(samplerState, uv1, 0); // Oude manier
-    //float4 noise1 = PerlinTexture.SampleLevel(samplerState, uv1, lod); // Met LOD fix
-
-    // Laag 1: Basis
-    float4 noise1 = PerlinTexture.SampleLevel(samplerState, uv1, lod);
-
-    // Laag 2: Geroteerd
-    // Factor 2.1 zorgt dat het grid niet oplijnt met laag 1
-    float2 uv2 = RotateUV(baseUV, 2.094) * 2.1f;
-    uv2 += float2(5.15, 1.33);
-    float4 noise2 = PerlinTexture.SampleLevel(samplerState, uv2, lod);
-
-    // Laag 3: Geroteerd
-    float2 uv3 = RotateUV(baseUV, 4.188) * 4.3f;
-    uv3 += float2(7.91, -4.24);
-    float4 noise3 = PerlinTexture.SampleLevel(samplerState, uv3, lod);
-
-    // Combineer
-    float combinedHeight = (noise1.r * 1.0f + noise2.r * 0.35f + noise3.r * 0.15f) / 1.5f;
-
-    // Pas hoogte toe
-    Pw.y += combinedHeight * heightScale;
-    
-    // Samevatting:
-    // Swimming (sampling) blijft prominant: bepaald door snelheid van de animatie van de perlin noise, de hoogte van de golven en het aantal driehoeken in 1 'Lod', wordt veroorzaakt doordat de driehoek van plaats verspringen doordat de camera beweegt
-    // Aliasing (nyquist) is sterk verminderd door gebruik van mipmapping (bandbreedte beperking) en LOD berekening, beperk de frequenties, waardoor de hoge frequenties weg gefiltered worden, zodat het raster het kan weergeven.
-    // Tiling blijft deels zichtbaar: door de herhaling van de perlin noise textuur, vooral bij lage worldScale.
-    
-    // -----------------------------------------------------------
-    // Output voorbereiden
-    // -----------------------------------------------------------
-
-    // Transformeer het berekende wereldpunt naar Camera Clip Space
+    // Transform the calculated world point to Camera Clip Space.
     output.outPos = mul(float4(Pw, 1.0f), vpMatrix);
     output.worldPos = Pw;
     output.texUV = baseUV;

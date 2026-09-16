@@ -273,9 +273,9 @@ void main(uint3 DTid : SV_DispatchThreadID)
     if (x >= width || y >= height)
         return;
     
-    // All values output, so color, values are between [-1, 1].
-    // So if flip, abs(), the value for let's say red so => RW_PerlinTexture[int2(x, y)] = float4(abs(perlin), perlin, perlin, 1.0f);
-    // We get a red color where the perlin noise is negative, so where i should be black it is red.
+    // All values output, so color, are between [-1, 1].
+    // So if we flip, abs(), the value for let's say red so => RW_PerlinTexture[int2(x, y)] = float4(abs(perlin), perlin, perlin, 1.0f);
+    // We get a red color where the perlin noise is negative, so where it should be black it is red.
     Method1(x, y);
     //Method2(x, y);
     //Method3(x, y);

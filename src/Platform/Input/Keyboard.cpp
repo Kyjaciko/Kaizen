@@ -15,7 +15,6 @@ namespace windows
 
 	KeyboardEvent Keyboard::ReadKey()
 	{
-		// No keys to be read? -> return empty keyboard event.
 		if (m_keyBuffer.empty()) return KeyboardEvent();
 
 		// Get first keyboard event from queue and remove it.
@@ -26,7 +25,6 @@ namespace windows
 
 	unsigned char Keyboard::ReadChar()
 	{
-		// No characters to be read? -> return 0.
 		if (m_charBuffer.empty()) return 0u;
 
 		// Get first character from queue and remove it.

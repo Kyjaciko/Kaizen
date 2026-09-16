@@ -43,13 +43,13 @@ namespace DirectX11
 
 	protected:
 		// Position.
-		DirectX::XMFLOAT3	m_Position;
-		DirectX::XMFLOAT3	m_Rotation;
-		DirectX::XMVECTOR	m_PositionVector;
-		DirectX::XMVECTOR	m_RotationVector;
+		DirectX::XMFLOAT3 m_Position;
+		DirectX::XMFLOAT3 m_Rotation;
+		DirectX::XMVECTOR m_PositionVector;
+		DirectX::XMVECTOR m_RotationVector;
 
 		// Size.
-		DirectX::XMFLOAT3	m_Scale;
+		DirectX::XMFLOAT3 m_Scale;
 
 	protected: 
 		virtual void UpdateMatrix()

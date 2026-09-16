@@ -31,8 +31,8 @@ namespace windows
 		unsigned char GetKey() const;
 
 	private:
-		EventType		m_type;
-		unsigned char	m_key;
+		EventType m_type;
+		unsigned char m_key;
 	};
 }
 

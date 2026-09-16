@@ -28,8 +28,8 @@ namespace DirectX11
 		const DirectX::XMMATRIX& GetWorldMatrix() const;
 
 	private:
-		DirectX::XMMATRIX	m_OrthoMatrix;
-		DirectX::XMMATRIX	m_WorldMatrix;
+		DirectX::XMMATRIX m_OrthoMatrix;
+		DirectX::XMMATRIX m_WorldMatrix;
 
 	private:
 		virtual void UpdateMatrix() override;

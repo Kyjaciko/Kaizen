@@ -48,7 +48,7 @@ namespace DirectX11
 			constant_buffer_description.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			constant_buffer_description.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			constant_buffer_description.MiscFlags = 0;
-			constant_buffer_description.ByteWidth = static_cast<UINT>(sizeof(T) + (16 - (sizeof(T) % 16))); // Has to be 16-byte alligned.
+			constant_buffer_description.ByteWidth = static_cast<UINT>(sizeof(T) + (16 - (sizeof(T) % 16))); // Constant buffers have to be 16-byte aligned.
 			constant_buffer_description.StructureByteStride = 0;
 
 			return device->CreateBuffer(&constant_buffer_description, nullptr, m_pConstantBuffer.GetAddressOf());
@@ -69,8 +69,8 @@ namespace DirectX11
 		ID3D11Buffer* const* GetAddressOf() const { return m_pConstantBuffer.GetAddressOf(); }
 
 	private:
-		ID3D11DeviceContext*					m_pDeviceContext;
-		Microsoft::WRL::ComPtr<ID3D11Buffer>	m_pConstantBuffer;
+		ID3D11DeviceContext* m_pDeviceContext;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_pConstantBuffer;
 
 	private:
 		ConstantBuffer(const ConstantBuffer& cpy);

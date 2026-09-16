@@ -25,13 +25,13 @@ namespace DirectX11
 		void Draw(const DirectX::XMMATRIX& viewMatrix, const DirectX::XMMATRIX& projectionMatrix, float nearZ, float farZ);
 
 	private:
-		IndexBuffer									m_Indices;
-		VertexBuffer<Vertex2D_StaticColor>			m_Vertices;
-		ConstantBuffer<CB_VS_vertexshader_grid>*	m_pCB_VS_VertexShader_grid;
+		IndexBuffer	m_Indices;
+		VertexBuffer<Vertex2D_StaticColor> m_Vertices;
+		ConstantBuffer<CB_VS_vertexshader_grid>* m_pCB_VS_VertexShader_grid;
 
-		DirectX::XMMATRIX							m_WorldMatrix = DirectX::XMMatrixIdentity();
+		DirectX::XMMATRIX m_WorldMatrix = DirectX::XMMatrixIdentity();
 
-		ID3D11DeviceContext*						m_pDeviceContext;
+		ID3D11DeviceContext* m_pDeviceContext;
 
 	private:
 		virtual void UpdateMatrix() override;
