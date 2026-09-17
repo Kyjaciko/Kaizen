@@ -31,6 +31,7 @@ namespace DirectX11
 
 		UINT numOctaves;
 		float totalTime;
+		float _pad[2];
 	};
 
 	struct OceanCB
@@ -42,6 +43,7 @@ namespace DirectX11
 		float heightScale; // Height of the waves.
 
 		float totalTime;
+		float _pad[3];
 	};
 }
 
@@ -98,12 +100,11 @@ namespace DirectX11
 		ID3D11ShaderResourceView* perlinSRV  = nullptr;
 
 	private:
-		void SetupGrid(ID3D11Device* device);
-		void SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double totalTime, const DirectX::XMFLOAT3& pos);
-		void SetupPixelShaderStage(PixelShader& ps);
+		bool SetupGrid(ID3D11Device* device);
+		void SetupVertexPixelShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, PixelShader& ps, ID3D11SamplerState* const* ppSamplers, const DirectX::XMFLOAT3& pos, double totalTime);
 		void SetupInputAssemblerStage(VertexShader& vs);
 
-		void GeneratePerlinNoise(ComputeShader computeShader, double totalTime);
+		void GeneratePerlinNoise(ComputeShader& computeShader, double totalTime);
 		void CreateUniformGridOfVertices(std::vector<OceanVertex>& vertices, std::vector<DWORD>& indices);
 
 		virtual void UpdateMatrix() override;

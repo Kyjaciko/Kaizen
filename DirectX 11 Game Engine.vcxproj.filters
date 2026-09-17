@@ -323,4 +323,9 @@
       <Filter>Header Files\Demos\Ocean</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Demos\Ocean\Ocean.hlsli">
+      <Filter>Header Files\Demos\Ocean</Filter>
+    </None>
+  </ItemGroup>
 </Project>

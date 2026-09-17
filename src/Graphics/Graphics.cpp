@@ -68,15 +68,15 @@ namespace DirectX11
 		////////////////////
 
 		// Crisis model.
-		{
+		/* {
 			m_GameObject.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
-		}
+		}*/
 
 		// Light.
-		{
+		/* {
 			m_pDeviceContext->PSSetShader(m_PixelShaderWithNoLight.GetShader(), nullptr, 0);
 			m_Light.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
-		}
+		}*/
 
 		// Ocean.
 		{
@@ -87,19 +87,19 @@ namespace DirectX11
 		}
 
 		// Axis.
-		{
+		/* {
 			m_pDeviceContext->IASetInputLayout(m_VertexShaderSprite.GetInputLayout());
 			m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 			m_pDeviceContext->PSSetShader(m_PixelShaderSprite.GetShader(), nullptr, 0);
 			m_pDeviceContext->VSSetShader(m_VertexShaderSprite.GetShader(), nullptr, 0);
 			m_Axis.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
-		}
+		}*/
 
 		/////////////////////////
 		// TRANSPARANT OBJECTS //
 		/////////////////////////
 
-		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateTransparant.Get(), 0);
+		/*m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateTransparant.Get(), 0);
 		m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF);
 		m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -109,19 +109,19 @@ namespace DirectX11
 			m_pDeviceContext->PSSetShader(m_PixelShaderGrid.GetShader(), nullptr, 0);
 			m_pDeviceContext->VSSetShader(m_VertexShaderGrid.GetShader(), nullptr, 0);
 			m_InfiniteGrid.Draw(m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), 0.1f, 10000.0f);
-		}
+		}*/
 
 		////////////////
 		// DRAWING 2D //
 		////////////////
 
 		// Spritesheet.
-		{
+		/* {
 			m_pDeviceContext->IASetInputLayout(m_VertexShaderSprite.GetInputLayout());
 			m_pDeviceContext->PSSetShader(m_PixelShaderSprite.GetShader(), nullptr, 0);
 			m_pDeviceContext->VSSetShader(m_VertexShaderSprite.GetShader(), nullptr, 0);
 			m_Sprite.Draw(m_Camera2D.GetWorldMatrix() * m_Camera2D.GetOrthoMatrix());
-		}
+		}*/
 
 		// Draw text.
         static double elapsedTime = 0.0;
@@ -284,7 +284,7 @@ namespace DirectX11
 
 		// Create rasterizer state.
 		CD3D11_RASTERIZER_DESC rasterizer_description(D3D11_DEFAULT);
-		//rasterizer_description.FillMode = D3D11_FILL_WIREFRAME;
+		rasterizer_description.FillMode = D3D11_FILL_WIREFRAME;
 		hr = m_pDevice->CreateRasterizerState(
 			&rasterizer_description,
 			m_pRasterizerState.GetAddressOf()

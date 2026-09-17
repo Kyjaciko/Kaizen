@@ -49,14 +49,16 @@ float2 RandomGradient(uint ix, uint iy)
     return float2(sin(random + totalTime), cos(random + totalTime));
 }
 
-float CubicInterp(float a0, float a1, float w)
+// Quintic fade (Perlin, "Improving Noise", 2002): 6t^5 - 15t^4 + 10t^3.
+float FadeInterp(float a0, float a1, float w)
 {
-    return (a1 - a0) * (3.0f - 2.0f * w) * (w * w) + a0;
+    float f = w * w * w * (w * (w * 6.0f - 15.0f) + 10.0f);
+    return lerp(a0, a1, f);
 }
 
-float DotGridGradient(int ix, int iy, float x, float y)
+float DotGridGradient(int ix, int iy, float x, float y, uint period)
 {
-    float2 gradient = RandomGradient(ix, iy);
+    float2 gradient = RandomGradient(uint(ix) % period, uint(iy) % period);
     
     // Calculate distance vector.
     float dx = x - ix;
@@ -66,7 +68,7 @@ float DotGridGradient(int ix, int iy, float x, float y)
     return dx * gradient.x + dy * gradient.y;
 }
 
-float Perlin1(float x, float y)
+float Perlin1(float x, float y, uint period)
 {
     // Define grid corners.
     int x0 = (int) floor(x);
@@ -79,17 +81,17 @@ float Perlin1(float x, float y)
     float sy = y - y0;
 
     // Interpolate the top two grid corners.
-    float n0 = DotGridGradient(x0, y0, x, y);
-    float n1 = DotGridGradient(x1, y0, x, y);
-    float ix0 = CubicInterp(n0, n1, sx);
+    float n0 = DotGridGradient(x0, y0, x, y, period);
+    float n1 = DotGridGradient(x1, y0, x, y, period);
+    float ix0 = FadeInterp(n0, n1, sx);
 
     // Interpolate the bottom two grid corners.
-    n0 = DotGridGradient(x0, y1, x, y);
-    n1 = DotGridGradient(x1, y1, x, y);
-    float ix1 = CubicInterp(n0, n1, sx);
+    n0 = DotGridGradient(x0, y1, x, y, period);
+    n1 = DotGridGradient(x1, y1, x, y, period);
+    float ix1 = FadeInterp(n0, n1, sx);
 
     // Interpolate the two interpolated values, now in y.
-    return CubicInterp(ix0, ix1, sy);
+    return FadeInterp(ix0, ix1, sy);
 }
 
 void Method1(uint x, uint y)
@@ -98,18 +100,20 @@ void Method1(uint x, uint y)
     float freq = 1.0f;
     float amp = 1.0f;
     
-    for (int i = 0; i < numOctaves; i++)
+    uint basePeriod = width / gridSize; // width must be a multiple of gridSize.
+    
+    for (uint i = 0; i < numOctaves; ++i)
     {
-        val += Perlin1(x * freq / gridSize, y * freq / gridSize) * amp;
-
+        uint period = basePeriod << i;
+        val += Perlin1(x * freq / gridSize, y * freq / gridSize, period) * amp;
         freq *= 2.0f;
         amp /= 2.0f;
     }
 
-    // Add a bit of contrast and clamp the value.
+    // Add a bit of contrast.
     val *= 1.2f;
     val = clamp(val, -1.0f, 1.0f);
-
+    
     //float mapped = (val * 0.5f) + 0.5f; // from [-1, 1] to [0, 1]
     RW_PerlinTexture[int2(x, y)] = float4(val, val, val, 1.0f);
     //RW_PerlinTexture[int2(x, y)] = float4(Billow(mapped), Billow(mapped), Billow(mapped), 1.0f);
@@ -223,7 +227,7 @@ void Method2(uint x, uint y)
     float fbm_noise = 0.0f;
     float amplitude = 1.0f;
 
-    for (int i = 0; i < numOctaves; i++)
+    for (uint i = 0; i < numOctaves; ++i)
     {
         fbm_noise += Perlin2(uv) * amplitude;
         
@@ -250,8 +254,8 @@ float Perlin2(uint x, uint y)
 
 void Method3(uint x, uint y)
 {
-    x *= 4.0f;
-    y *= 4.0f;
+    x *= 4u;
+    y *= 4u;
     float perlin = Perlin2(x, y);
     
     // Show perlin noise.

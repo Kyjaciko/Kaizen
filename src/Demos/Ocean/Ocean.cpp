@@ -30,13 +30,13 @@ namespace DirectX11
 		std::vector<DWORD> index_data;
 		CreateUniformGridOfVertices(vertex_data, index_data);
 
-		HRESULT hr = m_Vertices.Init(device, vertex_data.data(), vertex_data.size());
+		HRESULT hr = m_Vertices.Init(device, vertex_data.data(), static_cast<UINT>(vertex_data.size()));
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to initialize vertex buffer for ocean", false);
 
-		hr = m_Indices.Init(device, index_data.data(), index_data.size());
+		hr = m_Indices.Init(device, index_data.data(), static_cast<UINT>(index_data.size()));
 		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to initialize index buffer for ocean", false);
 
-		SetupGrid(device);
+		if (!SetupGrid(device)) return false;
 
 		SetPosition(0.0f, 0.0f, 0.0f);
 		SetRotation(0.0f, 0.0f, 0.0f);
@@ -53,8 +53,8 @@ namespace DirectX11
 
 		m_Time += deltaTime;
 		GeneratePerlinNoise(computeShader, m_Time);
-		SetupVertexShaderStage(viewProjectionMatrix, projectorMatrix, vs, ppSamplers, m_Time, camera.GetPositionFloat3());
-		SetupPixelShaderStage(ps);
+		SetupVertexPixelShaderStage(viewProjectionMatrix, projectorMatrix, vs, ps, ppSamplers, camera.GetPositionFloat3(), m_Time);
+		//SetupPixelShaderStage(ps);
 		SetupInputAssemblerStage(vs);
 
 		// Unbind shaders.
@@ -63,7 +63,7 @@ namespace DirectX11
 		m_pDeviceContext->PSSetShaderResources(0, 1, nullSRV);
 	}
 
-	void Ocean::SetupGrid(ID3D11Device* device)
+	bool Ocean::SetupGrid(ID3D11Device* device)
 	{
 		ID3D11Texture2D* perlin_texture = nullptr;
 
@@ -81,7 +81,7 @@ namespace DirectX11
 		texture_description.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 		HRESULT hr = device->CreateTexture2D(&texture_description, nullptr, &perlin_texture);
-		COM_ERROR_IF_FAILED_SHOW(hr, "Failed to create Perlin noise texture.");
+		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create Perlin noise texture.", false);
 
 		// Create unordered access view (UAV) for compute writing.
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uav_description = {};
@@ -90,7 +90,7 @@ namespace DirectX11
 		uav_description.Texture2D.MipSlice = 0;
 
 		hr = device->CreateUnorderedAccessView(perlin_texture, &uav_description, &perlinUAV);
-		COM_ERROR_IF_FAILED_SHOW(hr, "Failed to create Perlin noise UAV.");
+		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create Perlin noise UAV.", false);
 
 		// Create shader resource view (SRV) for vertexshader/pixelshader reading.
 		D3D11_SHADER_RESOURCE_VIEW_DESC srv_description = {};
@@ -100,33 +100,31 @@ namespace DirectX11
 		srv_description.Texture2D.MipLevels = -1;
 
 		hr = device->CreateShaderResourceView(perlin_texture, &srv_description, &perlinSRV);
-		COM_ERROR_IF_FAILED_SHOW(hr, "Failed to create Perlin noise SRV.");
+		COM_ERROR_IF_FAILED_RETURN(hr, "Failed to create Perlin noise SRV.", false);
 
 		perlin_texture->Release();
+		return true;
 	}
 
-	void Ocean::SetupVertexShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, ID3D11SamplerState* const* ppSamplers, double totalTime, const DirectX::XMFLOAT3& pos)
+	void Ocean::SetupVertexPixelShaderStage(const DirectX::XMMATRIX& viewProjectionMatrix, const DirectX::XMMATRIX& projectorMatrix, VertexShader& vs, PixelShader& ps, ID3D11SamplerState* const* ppSamplers, const DirectX::XMFLOAT3& pos, double totalTime)
 	{
 		m_pDeviceContext->VSSetShader(vs.GetShader(), nullptr, 0);
+		m_pDeviceContext->PSSetShader(ps.GetShader(), nullptr, 0);
 
 		// Update constant buffer.
-		m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pCB_VS_Ocean->GetAddressOf());
 		m_pCB_VS_Ocean->data.vpMatrix = viewProjectionMatrix;
 		m_pCB_VS_Ocean->data.projectorMatrix = projectorMatrix;
 		m_pCB_VS_Ocean->data.cameraPos = pos;
 		m_pCB_VS_Ocean->data.heightScale = kWaveHeight;
-
 		m_pCB_VS_Ocean->data.totalTime = static_cast<float>(totalTime);
 		m_pCB_VS_Ocean->ApplyChanges();
+		m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pCB_VS_Ocean->GetAddressOf());
+		m_pDeviceContext->PSSetConstantBuffers(0, 1, m_pCB_VS_Ocean->GetAddressOf());
 
 		m_pDeviceContext->VSSetShaderResources(0, 1, &perlinSRV);
-		m_pDeviceContext->VSSetSamplers(0, 1, ppSamplers);
-	}
-
-	void Ocean::SetupPixelShaderStage(PixelShader& ps)
-	{
-		m_pDeviceContext->PSSetShader(ps.GetShader(), nullptr, 0);
 		m_pDeviceContext->PSSetShaderResources(0, 1, &perlinSRV);
+		m_pDeviceContext->VSSetSamplers(0, 1, ppSamplers);
+		m_pDeviceContext->PSSetSamplers(0, 1, ppSamplers);
 	}
 
 	void Ocean::SetupInputAssemblerStage(VertexShader& vs)
@@ -138,7 +136,7 @@ namespace DirectX11
 		m_pDeviceContext->DrawIndexed(m_Indices.IndexCount(), 0, 0);
 	}
 
-	void Ocean::GeneratePerlinNoise(ComputeShader computeShader, double totalTime)
+	void Ocean::GeneratePerlinNoise(ComputeShader& computeShader, double totalTime)
 	{
 		// Update constant buffer.
 		m_pCB_CS_Perlin->data.width		 = m_Width;
@@ -146,7 +144,7 @@ namespace DirectX11
 		m_pCB_CS_Perlin->data.tileCount  = 8.0f;
 		m_pCB_CS_Perlin->data.gridSize   = 32.0f;
 		m_pCB_CS_Perlin->data.numOctaves = 4; // Can be 8.
-		m_pCB_CS_Perlin->data.totalTime  = totalTime;
+		m_pCB_CS_Perlin->data.totalTime  = static_cast<float>(totalTime);
 		m_pCB_CS_Perlin->ApplyChanges();
 
 		// Bind constant buffer on b0 and UAV on u0.

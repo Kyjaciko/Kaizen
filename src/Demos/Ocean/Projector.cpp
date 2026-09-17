@@ -8,13 +8,13 @@ namespace DirectX11
 {
 	std::array<DirectX::XMFLOAT3, 8> GetFrustumCornersWorldSpace(const DirectX::XMMATRIX& viewProjectionMatrix)
 	{
-		// Calculate camera’s inverted viewproj matrix.
+		// Calculate the camera its inverted viewproj matrix.
 		DirectX::XMVECTOR determinant;
 		DirectX::XMMATRIX invViewProj = DirectX::XMMatrixInverse(&determinant, viewProjectionMatrix);
 
 		// Define the 8 cornerpoints in NDC.
-		float zNear = 0.0f;
-		float zFar = 1.0f;
+		float zNear = 0.f;
+		float zFar = 1.f;
 
 		DirectX::XMVECTOR cornersNDC[8];
 		cornersNDC[0] = DirectX::XMVectorSet(-1.0f, -1.0f, zNear, 1.0f); // bl
@@ -67,7 +67,7 @@ namespace DirectX11
 
 	void FindFrustumPlaneIntersections(const std::array<DirectX::XMFLOAT3, 8>& frustumCorners, DirectX::FXMVECTOR Supper, DirectX::FXMVECTOR Slower, std::vector<DirectX::XMFLOAT3>& outBuffer)
 	{
-		// Indices who form the 12 edges (defined in step 1 cornersNDC).
+		// Indices who form the 12 edges.
 		constexpr int edges[12][2] = 
 		{
 			{0,1}, {1,2}, {2,3}, {3,0}, // Near plane edges.
@@ -77,13 +77,13 @@ namespace DirectX11
 
 		// Convert input to XMVECTOR for calculations.
 		DirectX::XMVECTOR corners[8] = {};
-		for (int i = 0; i < 8; ++i)
+		for (std::ptrdiff_t i = 0; i < 8; ++i)
 			corners[i] = DirectX::XMLoadFloat3(&frustumCorners[i]);
 
 		// Detect intersection for each edge.
 		DirectX::XMFLOAT3 pt;
 		DirectX::XMVECTOR intersectPt;
-		for (int i = 0; i < 12; ++i)
+		for (std::ptrdiff_t i = 0; i < 12; ++i)
 		{
 			int idxA = edges[i][0];
 			int idxB = edges[i][1];
@@ -130,7 +130,7 @@ namespace DirectX11
 		DirectX::XMVECTOR planeNormal = Sbase;
 		planeNormal = DirectX::XMVectorSetW(planeNormal, 0.0f);
 
-		for (int i = 0; i < intersectionPoints.size(); ++i)
+		for (std::ptrdiff_t i = 0; i < intersectionPoints.size(); ++i)
 		{
 			DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&intersectionPoints[i]);
 
@@ -144,7 +144,7 @@ namespace DirectX11
 		}
 	}
 
-	ProjectorRange CalculateVisibleSpan(std::vector<DirectX::XMFLOAT3>& pointsOnSbase, const DirectX::XMMATRIX& projectorViewProj)
+	ProjectorRange CalculateVisibleSpan(const std::vector<DirectX::XMFLOAT3>& pointsOnSbase, const DirectX::XMMATRIX& projectorViewProj)
 	{
 		// Transform each point.
 		float minX = std::numeric_limits<float>::max();
@@ -153,12 +153,18 @@ namespace DirectX11
 		float maxY = std::numeric_limits<float>::lowest();
 		for (const auto& pt : pointsOnSbase)
 		{
-			DirectX::XMVECTOR pWorld = DirectX::XMLoadFloat3(&pt);
+			DirectX::XMVECTOR pWorld = DirectX::XMVectorSet(pt.x, pt.y, pt.z, 1.f);
 
-			// Transform from World Space to Projector Space.
-			DirectX::XMVECTOR pProjected = DirectX::XMVector3TransformCoord(pWorld, projectorViewProj);
-			float x = DirectX::XMVectorGetX(pProjected);
-			float y = DirectX::XMVectorGetY(pProjected);
+			// Transform from world space to projector clip space.
+			DirectX::XMVECTOR pClip = DirectX::XMVector4Transform(pWorld, projectorViewProj);
+			float w = DirectX::XMVectorGetW(pClip);
+
+			// Points behind the projector should be ignored.
+			if (w <= 1e-4f)
+				continue;
+
+			float x = DirectX::XMVectorGetX(pClip) / w;
+			float y = DirectX::XMVectorGetY(pClip) / w;
 
 			// Update the bounds.
 			if (x < minX) minX = x;
@@ -167,6 +173,10 @@ namespace DirectX11
 			if (y < minY) minY = y;
 			if (y > maxY) maxY = y;
 		}
+
+		// No points were found in front of the projector.
+		if (minX > maxX || minY > maxY)
+			return ProjectorRange();
 
 		return ProjectorRange(minX, minY, maxX, maxY);
 	}
@@ -202,6 +212,9 @@ namespace DirectX11
 
 		ProjectPointsOnBasePlane(intersectionPoints, sBase);
 		ProjectorRange range = CalculateVisibleSpan(intersectionPoints, projectorViewProj);
+		if (range.maxX - range.minX <= 0.0f || range.maxY - range.minY <= 0.0f)
+			return false;
+
 		BuildRangeMatrix(range, rangeMatrix);
 
 		return true;
@@ -250,10 +263,6 @@ namespace DirectX11
 				aimPoint1 = DirectX::XMVectorAdd(camPos, DirectX::XMVectorScale(effectiveDir, t));
 			}
 		}
-
-		// --------------------------------------------
-		// --- METHODE 2: Fixed Distance Projection ---
-		// --------------------------------------------
 		
 		// Method 2: Project a point in front of the camera on the plane.
 		DirectX::XMVECTOR aimPoint2;
@@ -267,9 +276,9 @@ namespace DirectX11
 			aimPoint2 = DirectX::XMVectorSubtract(pointInFront, displacement);
 		}
 
-		// Interpolate between both methods based on camera angle.
-		// If lerpFactor is 1 (looking down), use AimPoint1.
-		// If lerpFactor is 0 (horizon), use AimPoint2.
+		// Interpolate between both methods based on camera angle:
+		// if lerpFactor is 1 (looking down), use AimPoint1.
+		// if lerpFactor is 0 (horizon), use AimPoint2.
 		return DirectX::XMVectorLerp(aimPoint2, aimPoint1, lerpFactor);
 	}
 
