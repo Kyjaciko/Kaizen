@@ -8,6 +8,7 @@ namespace DirectX11
 {
 	bool Graphics::Init(HWND hWnd, int width, int height)
 	{
+		m_DualView = false;
 		m_WindowWidth = width;
 		m_WindowHeight = height;
 
@@ -63,60 +64,25 @@ namespace DirectX11
 		m_pDeviceContext->VSSetShader(m_VertexShader.GetShader(), nullptr, 0);
 		m_pDeviceContext->PSSetShader(m_PixelShader.GetShader(), nullptr, 0);
 
-		////////////////////
-		// OPAQUE OBJECTS //
-		////////////////////
-
-		// Crisis model.
-		/* {
-			m_GameObject.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
-		}*/
-
-		// Light.
-		/* {
-			m_pDeviceContext->PSSetShader(m_PixelShaderWithNoLight.GetShader(), nullptr, 0);
-			m_Light.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
-		}*/
-
-		// Ocean.
+		if (m_DualView) 
 		{
-			m_pDeviceContext->IASetInputLayout(m_VertexShaderOcean.GetInputLayout());
-			m_pDeviceContext->PSSetShader(m_PixelShaderOcean.GetShader(), nullptr, 0);
-			m_pDeviceContext->VSSetShader(m_VertexShaderOcean.GetShader(), nullptr, 0);
-			m_Ocean.Draw(m_Camera, m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix(), m_ComputeShaderOcean, m_PixelShaderOcean, m_VertexShaderOcean, m_pSamplerState.GetAddressOf(), deltaTime);
+			m_pDeviceContext->RSSetViewports(1, &m_ViewportDualView[1]);
+			RenderScene(m_Camera2, deltaTime);
+			m_pDeviceContext->RSSetViewports(1, &m_ViewportDualView[0]);
+			RenderScene(m_Camera, deltaTime);
 		}
-
-		// Axis.
-		/* {
-			m_pDeviceContext->IASetInputLayout(m_VertexShaderSprite.GetInputLayout());
-			m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-			m_pDeviceContext->PSSetShader(m_PixelShaderSprite.GetShader(), nullptr, 0);
-			m_pDeviceContext->VSSetShader(m_VertexShaderSprite.GetShader(), nullptr, 0);
-			m_Axis.Draw(m_Camera.GetViewMatrix() * m_Camera.GetProjectionMatrix());
-		}*/
-
-		/////////////////////////
-		// TRANSPARANT OBJECTS //
-		/////////////////////////
-
-		/*m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateTransparant.Get(), 0);
-		m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF);
-		m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// Grid.
+		else
 		{
-			m_pDeviceContext->IASetInputLayout(m_VertexShaderGrid.GetInputLayout());
-			m_pDeviceContext->PSSetShader(m_PixelShaderGrid.GetShader(), nullptr, 0);
-			m_pDeviceContext->VSSetShader(m_VertexShaderGrid.GetShader(), nullptr, 0);
-			m_InfiniteGrid.Draw(m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), 0.1f, 10000.0f);
-		}*/
+			m_pDeviceContext->RSSetViewports(1, &m_ViewportSingleView);
+			RenderScene(m_Camera, deltaTime);
+		}
 
 		////////////////
 		// DRAWING 2D //
 		////////////////
 
 		// Spritesheet.
-		/* {
+		/*{
 			m_pDeviceContext->IASetInputLayout(m_VertexShaderSprite.GetInputLayout());
 			m_pDeviceContext->PSSetShader(m_PixelShaderSprite.GetShader(), nullptr, 0);
 			m_pDeviceContext->VSSetShader(m_VertexShaderSprite.GetShader(), nullptr, 0);
@@ -167,6 +133,57 @@ namespace DirectX11
 		/////////////
 
 		m_pSwapChain->Present(0, 0); // Vsync is OFF.
+	}
+
+	void Graphics::RenderScene(const Camera3D& camera, double deltaTime)
+	{
+		////////////////////
+		// OPAQUE OBJECTS //
+		////////////////////
+
+		// Crisis model.
+		/* {
+			m_GameObject.Draw(camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		}*/
+
+		// Light.
+		/* {
+			m_pDeviceContext->PSSetShader(m_PixelShaderWithNoLight.GetShader(), nullptr, 0);
+			m_Light.Draw(camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		}*/
+
+		// Ocean.
+		/* {
+			m_pDeviceContext->IASetInputLayout(m_VertexShaderOcean.GetInputLayout());
+			m_pDeviceContext->PSSetShader(m_PixelShaderOcean.GetShader(), nullptr, 0);
+			m_pDeviceContext->VSSetShader(m_VertexShaderOcean.GetShader(), nullptr, 0);
+			m_Ocean.Draw(m_Camera, camera.GetViewMatrix() * camera.GetProjectionMatrix(), m_ComputeShaderOcean, m_PixelShaderOcean, m_VertexShaderOcean, m_pSamplerState.GetAddressOf(), deltaTime);
+		}*/
+
+		// Axis.
+		/* {
+			m_pDeviceContext->IASetInputLayout(m_VertexShaderSprite.GetInputLayout());
+			m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+			m_pDeviceContext->PSSetShader(m_PixelShaderSprite.GetShader(), nullptr, 0);
+			m_pDeviceContext->VSSetShader(m_VertexShaderSprite.GetShader(), nullptr, 0);
+			m_Axis.Draw(camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		}*/
+
+		/////////////////////////
+		// TRANSPARANT OBJECTS //
+		/////////////////////////
+
+		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilStateTransparant.Get(), 0);
+		m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), nullptr, 0xFFFFFFFF);
+		m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		// Grid.
+		{
+			m_pDeviceContext->IASetInputLayout(m_VertexShaderGrid.GetInputLayout());
+			m_pDeviceContext->PSSetShader(m_PixelShaderGrid.GetShader(), nullptr, 0);
+			m_pDeviceContext->VSSetShader(m_VertexShaderGrid.GetShader(), nullptr, 0);
+			m_InfiniteGrid.Draw(camera.GetViewMatrix(), camera.GetProjectionMatrix(), 0.1f, 10000.0f);
+		}
 	}
 
 	bool Graphics::InitDirectX(HWND hWnd)
@@ -276,15 +293,18 @@ namespace DirectX11
 		// RASTERIZER //
 		////////////////
 
-		CD3D11_VIEWPORT viewport(0.0f, 0.0f, static_cast<float>(m_WindowWidth), static_cast<float>(m_WindowHeight));
+		m_ViewportSingleView = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(m_WindowWidth), static_cast<float>(m_WindowHeight));
+
+		m_ViewportDualView[0] = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(m_WindowWidth) / 2.f, static_cast<float>(m_WindowHeight));
+		m_ViewportDualView[1] = CD3D11_VIEWPORT(static_cast<float>(m_WindowWidth) / 2.f, 0.0f, static_cast<float>(m_WindowWidth) / 2.f, static_cast<float>(m_WindowHeight));
 
 		// Set viewport.
 		// For example we could use multiple viewports here for split-screen.
-		m_pDeviceContext->RSSetViewports(1, &viewport);
+		m_pDeviceContext->RSSetViewports(1, &m_ViewportSingleView);
 
 		// Create rasterizer state.
 		CD3D11_RASTERIZER_DESC rasterizer_description(D3D11_DEFAULT);
-		rasterizer_description.FillMode = D3D11_FILL_WIREFRAME;
+		//rasterizer_description.FillMode = D3D11_FILL_WIREFRAME;
 		hr = m_pDevice->CreateRasterizerState(
 			&rasterizer_description,
 			m_pRasterizerState.GetAddressOf()
@@ -528,6 +548,10 @@ namespace DirectX11
 		m_Camera.SetPosition(5.f, 5.f, 0.f);
 		m_Camera.SetProjectionValues(90.0f, static_cast<float>(m_WindowWidth) / static_cast<float>(m_WindowHeight), .1f, 10000.f);
 		m_Camera.SetLookAtPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+
+		m_Camera2.SetPosition(5.f, 100.f, 0.f);
+		m_Camera2.SetProjectionValues(90.0f, (static_cast<float>(m_WindowWidth) / 2.f) / static_cast<float>(m_WindowHeight), .1f, 10000.f);
+		m_Camera2.SetLookAtPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 		return true;
 	}

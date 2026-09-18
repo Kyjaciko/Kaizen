@@ -32,6 +32,8 @@ namespace EngineName
 
 	void Engine::Update(double deltaTime)
 	{
+		static DirectX11::Camera3D* camera = m_gfx.GetCamera(10, 10);
+
 		while (!m_keyboard.IsCharBufferEmpty())
 		{
 			unsigned char character = m_keyboard.ReadChar();
@@ -47,9 +49,15 @@ namespace EngineName
 		{
 			windows::MouseEvent event = m_mouse.ReadEvent();
 
+			if (m_mouse.IsLeftPressed() && event.GetEventType() == windows::MouseEvent::EventType::LEFT_DOWN)
+				camera = m_gfx.GetCamera(event.GetPosX(), event.GetPosY());
+
 			// Change camera rotation based on mouse movement.
-			if (m_mouse.IsRightPressed() && event.GetEventType() == windows::MouseEvent::EventType::RAW_MOVE)
-				m_gfx.GetCamera()->AdjustRotation(static_cast<float>(event.GetPosY()) * 0.001f, static_cast<float>(event.GetPosX()) * 0.001f, 0);
+			if (m_mouse.IsRightPressed() && event.GetEventType() == windows::MouseEvent::EventType::RAW_MOVE && camera)
+				camera->AdjustRotation(static_cast<float>(event.GetPosY()) * 0.001f, static_cast<float>(event.GetPosX()) * 0.001f, 0);
+
+			if (m_mouse.IsMiddlePressed() && event.GetEventType() == windows::MouseEvent::EventType::MIDDLE_DOWN)
+				m_gfx.SwitchDualView();
 		}
 
 		m_gfx.GetGameObject()->AdjustRotation(0.0f, 1.0f * deltaTime, 0.0f);
@@ -58,9 +66,9 @@ namespace EngineName
 		// ADJUST CAMERA //
 		///////////////////
 		using namespace DirectX;
+		if (!camera) return;
 
 		float camera_speed = 1.0f;
-		DirectX11::Camera3D* camera = m_gfx.GetCamera();
 		if (m_keyboard.IsKeyPressed(VK_SPACE))
 			camera_speed = 50.0f;
 		if (m_keyboard.IsKeyPressed('Z'))

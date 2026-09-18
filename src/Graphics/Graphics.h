@@ -45,16 +45,37 @@ namespace DirectX11
 		bool Init(HWND hWnd, int width, int height);
 		void RenderFrame(double deltaTime);
 
-		Camera3D* GetCamera() { return &m_Camera; }
+		Camera3D* GetCamera(int x, int y) 
+		{ 
+			if (x < static_cast<float>(m_WindowWidth) / 2.f || !m_DualView)
+				return &m_Camera; 
+			else
+				return &m_Camera2; 
+		}
+
 		GameObject*  GetGameObject()  { return &m_GameObject; }
 		Light* GetLight() { return &m_Light; }
+
+		void SwitchDualView() 
+		{ 
+			m_DualView = !m_DualView;
+			if (m_DualView) 
+				m_Camera.SetProjectionValues(90.0f, static_cast<float>(m_WindowWidth) / static_cast<float>(m_WindowHeight), .1f, 10000.f);
+			else
+				m_Camera.SetProjectionValues(90.0f, (static_cast<float>(m_WindowWidth) / 2.f) / static_cast<float>(m_WindowHeight), .1f, 10000.f);
+		}
 
 	private:
 		int m_WindowWidth;
 		int m_WindowHeight;
 
 		Camera2D m_Camera2D;
+
+		bool m_DualView;
+		CD3D11_VIEWPORT m_ViewportSingleView;
+		CD3D11_VIEWPORT m_ViewportDualView[2];
 		Camera3D m_Camera;
+		Camera3D m_Camera2;
 
 		Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
@@ -115,6 +136,8 @@ namespace DirectX11
 		bool InitDirectX(HWND hWnd);
 		bool InitShaders();
 		bool InitScene();
+
+		void RenderScene(const Camera3D& camera, double deltaTime);
 	};
 }
 
